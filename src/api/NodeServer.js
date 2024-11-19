@@ -5,15 +5,15 @@ let publicFiles = ""
 const local = 1
 if (process.env.NODE_ENV === "development") {
     if (local === 1) {
-        host = "http://localhost:3015/api"
-        publicFiles = "http://localhost:3015/static"
+        host = "http://localhost:3016/api"
+        publicFiles = "http://localhost:3016/static"
     } else {
-        host = "https://api-test.nekoadmin.com.ar/mayorista-vp/api"
-        publicFiles = "https://api-test.nekoadmin.com.ar/mayorista-vp/static"
+        host = "https://api-test.nekoadmin.com.ar/mayoristavp/api"
+        publicFiles = "https://api-test.nekoadmin.com.ar/mayoristavp/static"
     }
 } else {
-    host = "https://api-prod.nekoadmin.com.ar/mayorista-vp/api"
-    publicFiles = "https://api-prod.nekoadmin.com.ar/mayorista-vp/static"
+    host = "https://api-prod.nekoadmin.com.ar/mayoristavp/api"
+    publicFiles = "https://api-prod.nekoadmin.com.ar/mayoristavp/static"
 }
 
 
