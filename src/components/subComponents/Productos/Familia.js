@@ -9,6 +9,7 @@ import {
 
 } from "reactstrap"
 import PlantCategoriasForm from './SubComponentes/Categorias/PlantCategorias'
+import PlantFamily from './SubComponentes/Categorias/PlantFamily'
 
 const Familia = ({
     categoriaNvo,
@@ -51,7 +52,7 @@ const Familia = ({
         setPlantCat(
             listaCat.map((categoria, key) => {
                 return (
-                    <PlantCategoriasForm
+                    <PlantFamily
                         key={key}
                         id={key}
                         categoria={categoria}

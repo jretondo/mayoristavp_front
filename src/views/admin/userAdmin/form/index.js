@@ -43,7 +43,7 @@ const UserForm = ({
             apellido,
             email,
             usuario,
-            pv: ptoVtaSelect
+            pv: ptoVtaSelect === "null" ? null : ptoVtaSelect
         }
 
         if (detBool) {
@@ -107,7 +107,7 @@ const UserForm = ({
                     setApellido(userData.apellido)
                     setUsuario(userData.usuario)
                     setEmail(userData.email)
-                    setPtoVtaSelect(userData.pv)
+                    setPtoVtaSelect(userData.pv === null ? "null" : userData.pv)
                     document.getElementById("nameTxt").focus()
                 } else {
                     setloading(false)
@@ -142,8 +142,9 @@ const UserForm = ({
 
                     setPlantPtosVta(
                         resultado.map((item, key) => {
+                           
                             return (
-                                <option key={key} value={item.pv}>{item.direccion + " (PV: " + item.pv + ")"}</option>
+                                <option key={key +2} value={item.pv}>{item.direccion + " (PV: " + item.pv + ")"}</option>
                             )
                         })
                     )
@@ -265,7 +266,8 @@ const UserForm = ({
                                             onChange={e => setPtoVtaSelect(e.target.value)}
                                             required
                                         >
-                                            <option value={0}>Deposito</option>
+                                            <option key={0} value={0}>Deposito</option>
+                                            <option key={1} value={"null"}>Todos</option>
                                             {plantPtosVta}
                                         </Input>
                                     </FormGroup>

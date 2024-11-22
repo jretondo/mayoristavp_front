@@ -230,6 +230,9 @@ const FilaProducto = ({
                 <td style={{ textAlign: "center" }}>
                     {item.subcategory}
                 </td>
+                <td style={{ textAlign: "center" }}>
+                    {item.family}
+                </td>
                 <td style={{ textAlign: "center" }} onDoubleClick={() => actChangePrice()} >
                     {
                         compraBool ?

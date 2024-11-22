@@ -158,6 +158,7 @@ const Productos = () => {
         formData.append("id_prov", idProv);
         formData.append("porc_minor", venta);
         formData.append("vta_price", precioVta)
+        formData.append("family", familiaNvo)
         if (vtaFijaBool) {
             formData.append("vta_fija", vtaFijaBool)
         }
@@ -243,6 +244,7 @@ const Productos = () => {
                     setPrecioVta(gralData.vta_price)
                     setVtaFijaBool(gralData.vta_fija)
                     setLastUpdate(gralData.update_time)
+                    setFamiliaNvo(gralData.family)
                     const roundConst = parseInt(gralData.round)
                     if (roundConst > 0) {
                         setRound(roundConst)
