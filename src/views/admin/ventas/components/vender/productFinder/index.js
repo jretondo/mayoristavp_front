@@ -129,6 +129,7 @@ const ProductFinder = () => {
                 prodSearchToggle={prodSearchToggle}
                 setProdText={setProdText}
                 findProd={findProd}
+                prodText={prodText}
             />
         </>
     )

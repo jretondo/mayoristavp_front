@@ -170,77 +170,7 @@ const Ventas = ({
 
     const facturar = async (data) => {
         setData(data)
-        const descuento = enviarCodigo()
-        if (!descuento) {
-            generarFacturaFinal(data)            
-        } else {
-            /*
-            if (parseInt(clienteBool) === 1) {
-                const getClient = await axios.get(`${UrlNodeServer.clientesDir.clientes}?search=${ndoc}`, {
-                    headers: {
-                        'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-                    }
-                }).then(res => {
-                    if (res.data.status === 200) {
-                        return res.data.body.data[0]
-                    } else {
-                        return null
-                    }
-                }).catch(err => {
-                    console.log('object :>> ', err);
-                    return null
-                })
-                if (getClient) {
-                    generarFacturaFinal(data)
-                } else {
-                    setProcessing(true)
-                    const data = {
-                        total: formatMoney(totalPrecio),
-                        descuentoPorcentaje: descuentoPerc,
-                        descuento: formatMoney(totalPrecio - (totalPrecio * (descuentoPerc / 100))),
-                        cliente: `${razSoc} (${ndoc})`
-                    }
-                    await axios.post(UrlNodeServer.invoicesDir.sub.codigoDescuento, data, {
-                        headers: {
-                            'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-                        }
-                    }).then(res => {
-                        if (res.data.status === 200) {
-                            setModalDescuento(true)
-                        } else {
-                            swal("Error en el código!", "Algo falló al querer generar el código.", "error");
-                        }
-                    }).catch(err => {
-                        console.log('object :>> ', err);
-                        swal("Error en el código!", "Algo falló al querer generar el código.", "error");
-                    }).finally(() => { setProcessing(false) })
-                }
-            } else {
-                generarFacturaFinal(data)
-            }
-            */
-            setProcessing(true)
-            const data = {
-                total: formatMoney(totalPrecio),
-                descuentoPorcentaje: descuentoPerc,
-                descuento: formatMoney(totalPrecio - (totalPrecio * (descuentoPerc / 100))),
-                cliente: `${razSoc} (${ndoc})`
-            }
-            await axios.post(UrlNodeServer.invoicesDir.sub.codigoDescuento, data, {
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-                }
-            }).then(res => {
-                if (res.data.status === 200) {
-                    setModalDescuento(true)
-                } else {
-                    swal("Error en el código!", "Algo falló al querer generar el código.", "error");
-                }
-            }).catch(err => {
-                console.log('object :>> ', err);
-                swal("Error en el código!", "Algo falló al querer generar el código.", "error");
-            }).finally(() => { setProcessing(false) })
-        }
+        generarFacturaFinal(data)      
     }
 
     const verificarCodigo = async () => {
@@ -479,7 +409,9 @@ const Ventas = ({
                                     </button>
                                 </Col>
                             </Row>
-                            <Modal isOpen={modalCodDescuento} toggle={() => setModalDescuento(!modalCodDescuento)}>
+                            {
+                                /*
+                                  <Modal isOpen={modalCodDescuento} toggle={() => setModalDescuento(!modalCodDescuento)}>
                                 <ModalHeader>Autorización por Descuento - Tiempo: {Math.floor(tiempoLimite / 60)}:{formatMoney(tiempoLimite % 60, 0)} </ModalHeader>
                                 <ModalBody>
                                     <Row>
@@ -514,6 +446,8 @@ const Ventas = ({
                                     </Button>
                                 </ModalFooter>
                             </Modal>
+                                */
+                          }
                         </>
                 }
             </CardBody>

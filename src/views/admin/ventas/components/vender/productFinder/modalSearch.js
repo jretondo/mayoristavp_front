@@ -9,7 +9,8 @@ const ModalSearchProd = ({
     prodSearchModal,
     prodSearchToggle,
     setProdText,
-    findProd
+    findProd,
+    prodText
 }) => {
     const [dataFind, setDataFind] = useState("")
     const [loading, setLoading] = useState(false)
@@ -17,11 +18,11 @@ const ModalSearchProd = ({
         <td> <span style={{ textAlign: "center", marginRight: "auto", marginLeft: "auto" }}> No hay productos encontrados</span></td>
     </tr>)
 
-    const titulos = ["Producto", "Proveedor", "Marca", "Precio Final", ""]
+    const titulos = ["", "Producto", "Precio Final"]
 
     const Find = async () => {
         setLoading(true)
-        await axios.get(UrlNodeServer.productsDir.products + `/1?query=${dataFind}&cantPerPage=15`, {
+        await axios.get(UrlNodeServer.productsDir.products + `/1?query=${prodText}&cantPerPage=15`, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('user-token')
             }
@@ -43,7 +44,7 @@ const ModalSearchProd = ({
                                         id={key}
                                         setProdText={setProdText}
                                         prodSearchToggle={prodSearchToggle}
-                                        findProd={findProd}
+                                        findProd={prodText}
                                     />)
                             })
                         )
@@ -69,10 +70,15 @@ const ModalSearchProd = ({
             }
         }, 500);
     }, [prodSearchModal])
+
+    useEffect(() => {
+        prodSearchModal &&  Find()
+        // eslint-disable-next-line
+    }, [prodSearchModal])
     return (
         <div>
             <Modal isOpen={prodSearchModal} toggle={prodSearchToggle} size="lg" >
-                <ModalHeader toggle={prodSearchToggle}>Buscar Cliente</ModalHeader>
+                <ModalHeader toggle={prodSearchToggle}>Buscar Producto</ModalHeader>
                 <ModalBody>
                     <Form onSubmit={e => {
                         e.preventDefault();
@@ -86,11 +92,11 @@ const ModalSearchProd = ({
                                         type="text"
                                         id="dataFindTxt"
                                         placeholder="Nombre, cod. de bara, proveedor, etc"
-                                        value={dataFind}
+                                        value={prodText}
                                         required
                                         onChange={e => {
                                             e.preventDefault();
-                                            setDataFind(e.target.value)
+                                            setProdText(e.target.value)
                                         }}
                                     />
                                 </FormGroup>

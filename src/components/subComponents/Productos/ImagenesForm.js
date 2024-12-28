@@ -122,7 +122,7 @@ const ImagenesForm = ({
                         className="form-control-alternative"
                         id="imgNvaAltNva"
                         type="file"
-                        accept=".jpg"
+                        accept="image/*"
                         onChange={e => AddNvaImg(e)}
                     />
                 </FormGroup>

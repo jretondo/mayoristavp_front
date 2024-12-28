@@ -15,25 +15,21 @@ const FilaProdSearch = ({
     }
     return (
         <tr key={id}>
-            <td style={{ textAlign: "center" }}>
-                {item.name}
-            </td>
-            <td style={{ textAlign: "center" }}>
-                {item.category}
-            </td>
-            <td style={{ textAlign: "center" }}>
-                {item.subcategory}
-            </td>
-            <td style={{ textAlign: "center" }}>
-                $ {formatMoney(item.vta_price)}
-            </td>
-            <td className="text-right">
+              <td className="text-right">
                 <button
                     onClick={() => SelectProd(item)}
                     className='btn btn-success'>
                     <i className="fas fa-check" ></i>
                 </button>
             </td>
+            <td style={{ textAlign: "center" }}>
+                {item.name} <br />
+                <small>Proveedor: <b>{item.category}</b></small> <br />
+                <small>Marca: <b>{item.subcategory}</b></small>
+            </td>          
+            <td style={{ textAlign: "center" }}>
+                $ {formatMoney(item.vta_price)}
+            </td>          
         </tr>
     )
 }

@@ -1,8 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
+    Col,
+    Input,
     Pagination,
     PaginationItem,
     PaginationLink,
+    Row,
 } from "reactstrap"
 
 const Paginacion = ({
@@ -16,6 +19,15 @@ const Paginacion = ({
     call,
     data
 }) => {
+    const [cantPag, setCantPag] = useState([])
+
+    useEffect(() => {
+        for (let i = 1; i <= ultimaPag; i++) {
+            const pag = i
+            setCantPag(cantPag => [...cantPag, pag])
+        }
+        // eslint-disable-next-line
+    }, [ultimaPag])
 
     useEffect(() => {
         ListarPaginas()
@@ -68,6 +80,31 @@ const Paginacion = ({
 
     return (
         <>
+            <Row>
+                <Col md="4">
+                <div>
+                <span className="text-muted">
+                    Ir a la página: 
+                    <Input
+                        type="select"
+                        name="select"
+                        value={pagina}
+                        onChange={e => ChangePage(e, parseInt(e.target.value))}
+                        >
+                            {ultimaPag && cantPag.map((pag, key) => {
+                                return (
+                                    <option key={key} value={pag}>
+                                        {pag}
+                                    </option>
+                                )
+                            }
+                        )}
+                    </Input>
+                </span>
+            </div>
+                </Col>
+           
+            <Col md="8">
             <nav aria-label="...">
                 <Pagination
                     className="pagination justify-content-end mb-0"
@@ -97,6 +134,8 @@ const Paginacion = ({
                     </PaginationItem>
                 </Pagination>
             </nav>
+                </Col>
+                </Row>
         </>
     )
 }

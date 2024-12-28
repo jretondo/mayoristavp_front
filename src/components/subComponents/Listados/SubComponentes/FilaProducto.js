@@ -199,12 +199,12 @@ const FilaProducto = ({
                             >
                                 <img
                                     alt="..."
-                                    src={UrlNodeServer.publicFolder.prodImages + item.url_img}
+                                    src={UrlNodeServer.publicFolder.prodImages +( item.url_img ? item.url_img:"product.png")}
                                     style={{ width: "100%", height: "100%" }}
                                 />
                             </a>
                             <span className="mb-0 text-sm" style={{ marginLeft: "10px" }}>
-                                <span style={{ fontSize: "17px" }}  > {item.name}</span><br />
+                                <span style={{ fontSize: "13px" }}  > {item.name}</span><br />
                                 <span style={{ fontSize: "11px" }} >
                                     <Button
                                         color="primary"
@@ -240,10 +240,7 @@ const FilaProducto = ({
                             "$" + formatMoney(item.precio_compra)
                     }
 
-                </td>
-                <td style={{ textAlign: "center" }}>
-                    $ {formatMoney((item.precio_compra * ((item.iva / 100) + 1)))}
-                </td>
+                </td>              
                 <td style={{ textAlign: "center" }}>
                     {"$ " + formatMoney(item.vta_price) + " (" + item.porc_minor}%)
                 </td>

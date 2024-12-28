@@ -155,12 +155,10 @@ const ListaClientesMod = ({
                 const respuesta = res.data
                 const status = parseInt(respuesta.status)
 
-                console.log('respuesta   :>> ', respuesta);
                 if (status === 200) {
                     const body = respuesta.body
                     setDataList(body.pagesObj)
                     setUltimaPag(body.pagesObj.totalPag)
-                    console.log('body.pagesObj.totalPag :>> ', body.pagesObj.totalPag);
                     if (parseInt(body.pagesObj.totalPag) > 0) {
                         setListado(
                             body.data.map((item, key) => {
@@ -306,6 +304,7 @@ const ListaClientesMod = ({
                                                     call={call}
                                                     setCall={setCall}
                                                     titulo="Buscar un Cliente"
+                                                    setPagina={setPagina}
                                                 />
                                             </Col>
                                         </Row>
