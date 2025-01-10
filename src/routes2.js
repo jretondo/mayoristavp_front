@@ -6,6 +6,7 @@ import PuntosVenta from 'views/admin/puntoVenta'
 import Ventas from 'views/admin/ventas'
 import UserAdmin from 'views/admin/userAdmin'
 import Stock from 'views/admin/stock';
+import HeroSlider from 'views/admin/heroSlider';
 
 var routes = [
   {
@@ -68,6 +69,13 @@ var routes = [
     component: UserAdmin,
     layout: process.env.PUBLIC_URL + "/admin",
     id: 8
-  }
+  },{
+    path: "/hero-slider",
+    name: "Administración de Ofertas",
+    icon: "ni ni-bag-17 text-red",
+    component: HeroSlider,
+    layout: process.env.PUBLIC_URL + "/admin",
+    id: 10
+  },
 ];
 export default routes;

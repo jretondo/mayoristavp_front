@@ -12,7 +12,7 @@ const TotalItemsVtas = ({
     const [tituloStr, setTituloStr] = useState("")
 
     const format = useCallback(() => {
-        switch (parseInt(totalId)) {
+        switch (parseInt(totalId)) {  
             case 0:
                 setTituloStr("Total Efectivo")
                 break;
@@ -28,12 +28,11 @@ const TotalItemsVtas = ({
             case 4:
                 setTituloStr("Total Cuenta Corriente")
                 break;
-            case 5:
-                setTituloStr("Total Transferencias")
+            case 6:
+                setTituloStr("Total Cheques")
                 break;
-
-            default:
-                setTituloStr("No hay totales para mostrar")
+            case 7:
+                setTituloStr("Total Transferencias")
                 break;
         }
 

@@ -58,6 +58,7 @@ const ListaClientesMod = ({
     const [nvoEmail, setNvoEmail] = useState("")
     const [nvoCondIva, setNvoCondIva] = useState(0)
     const [idDetalle, setIdDetalle] = useState(0)
+    const [direccion, setDireccion] = useState("")
 
     const [esperar, setEsperar] = useState(false)
 
@@ -96,7 +97,8 @@ const ListaClientesMod = ({
             razsoc: nvoRazSoc,
             telefono: nvoTelefono,
             email: nvoEmail,
-            cond_iva: nvoCondIva
+            cond_iva: nvoCondIva,
+            direccion: direccion
         }
         if (update) {
             datos.id = idDetalle
@@ -250,6 +252,7 @@ const ListaClientesMod = ({
                     setNvoTelefono(body.telefono)
                     setNvoEmail(body.email)
                     setNvoCondIva(body.cond_iva)
+                    setDireccion(body.direccion)
                 } else {
                     setMsgStrong("Hubo un error! ")
                     setMsgGralAlert("Intente nuevamenete")
@@ -273,6 +276,7 @@ const ListaClientesMod = ({
         setNvoCondIva(0)
         setNvoEmail("")
         setNvoTelefono("")
+        setDireccion("")
     }
 
     return (
@@ -477,6 +481,23 @@ const ListaClientesMod = ({
                                                             value={nvoTelefono}
                                                             onChange={e => setNvoTelefono(e.target.value)}
 
+                                                        />
+                                                    </FormGroup>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col lg="12">
+                                                    <FormGroup>
+                                                    <label
+                                                            className="form-control-label"
+                                                            htmlFor="input-username"
+                                                        >Direccion</label>
+                                                        <Input
+                                                            className="form-control-alternative"
+                                                            placeholder="Direccion..."
+                                                            type="text"
+                                                            value={direccion}
+                                                            onChange={e => setDireccion(e.target.value)}
                                                         />
                                                     </FormGroup>
                                                 </Col>

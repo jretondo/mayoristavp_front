@@ -22,7 +22,7 @@ const ModalNewStock = ({
 }) => {
 
     const [loading, setLoading] = useState(false)
-    const [nvoStock, setNvoStock] = useState(1)
+    const [nvoStock, setNvoStock] = useState("")
     const [stockAct, setStockAct] = useState(0)
     const [stockTotal, setStockTotal] = useState(0)
     const [ptoVta, setPtoVta] = useState({ id: 0 })
@@ -257,7 +257,7 @@ const ModalNewStock = ({
 
     const reset = () => {
         setLoading(false)
-        setNvoStock(1)
+        setNvoStock("")
         setPtoVta({ id: 0 })
         setPlantPtosVta(<></>)
         setCosto(item.precio_compra)
@@ -300,7 +300,7 @@ const ModalNewStock = ({
                                                 onChange={e => setPtoVta(JSON.parse(e.target.value))}
                                             >
                                                 <option value={JSON.stringify({ id: 0 })}>Deposito</option>
-                                                {plantPtosVta}
+                                                
                                             </Input>
                                         </FormGroup>
                                     </Col>

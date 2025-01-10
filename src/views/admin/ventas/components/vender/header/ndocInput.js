@@ -18,7 +18,8 @@ const NdocInput = ({
     setTfact,
     setCondIvaCli,
     factFiscBool,
-    colSize
+    colSize,
+    setDireccion,
 }) => {
     const Find = async () => {
         if (parseInt(tipoDoc) === 96) {
@@ -56,6 +57,8 @@ const NdocInput = ({
                             console.log('cliente :>> ', cliente);
                             setCondIvaCli(parseInt(cliente.cond_iva))
                             setRazSoc(cliente.razsoc)
+                            setDireccion(cliente.direccion)
+                            setTelefono(cliente.telefono)
                             if (cliente.email.length > 0) {
                                 setEmailCliente(cliente.email)
                                 setEnvioEmailBool(1)
@@ -105,6 +108,8 @@ const NdocInput = ({
                             setTipoDoc(tipoCliente)
                             setNdoc(cliente.ndoc)
                             setRazSoc(cliente.razsoc)
+                            setDireccion(cliente.direccion)
+                            setTelefono(cliente.telefono)
                             setCondIvaCli(parseInt(cliente.cond_iva))
                             if (cliente.email.length > 0) {
                                 setEmailCliente(cliente.email)

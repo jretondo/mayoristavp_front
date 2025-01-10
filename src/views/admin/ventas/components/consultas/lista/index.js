@@ -11,7 +11,9 @@ const VentasListMod = ({
     listaCaja,
     pagina,
     setPagina,
-    loading
+    loading,
+    setActualizar,
+    actualizar
 }) => {
     const [call, setCall] = useState(false)
     const [plantPaginas, setPlantPaginas] = useState(<></>)
@@ -32,9 +34,13 @@ const VentasListMod = ({
                     data.map((item, key) => {
                         return (
                             <FilaVentas
-                                key={key}
-                                id={key}
-                                item={item}
+                            key={key}
+                            id={key}
+                            item={item}
+                            pagina={pagina}
+                            setPagina={setPagina}
+                            setActualizar={setActualizar}
+                            actualizar={actualizar}
                             />
                         )
                     })

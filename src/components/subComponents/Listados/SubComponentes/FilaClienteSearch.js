@@ -9,7 +9,9 @@ const FilaClientesSearch = ({
     setRazSoc,
     cuitSearchToggle,
     setEnvioEmailBool,
-    setCondIvaCli
+    setCondIvaCli,
+    setDireccion,
+    setTelefono
 }) => {
 
     const SelectCuit = (i) => {
@@ -23,7 +25,8 @@ const FilaClientesSearch = ({
         setEmailCliente(i.email)
         setRazSoc(i.razsoc)
         setCondIvaCli(parseInt(i.cond_iva))
-
+        setDireccion && setDireccion(i.direccion)
+        setTelefono && setTelefono(i.telefono)
         if (i.email.length > 0) {
             setEnvioEmailBool(1)
         } else {

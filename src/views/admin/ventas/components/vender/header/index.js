@@ -2,121 +2,122 @@ import UrlNodeServer from '../../../../../../api/NodeServer';
 import axios from 'axios';
 import CompleteCerosLeft from 'Function/CompleteCeroLeft';
 import moment from 'moment';
-import React, { useCallback, useEffect, useState } from 'react'
-import {
-    Button,
-    Col,
-    FormGroup,
-    Input,
-    InputGroup,
-    InputGroupAddon,
-    Label,
-    Row,
-} from "reactstrap";
-import ModalSearchCuit from './modalSearchCuit';
-import NdocInput from './ndocInput';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Button, Col, FormGroup, Input, Label, Row } from 'reactstrap';
 import PtosVtas from './ptosVta';
 import Form from 'reactstrap/lib/Form';
+import ClienteModal from './clienteModal/index';
+
 const InvoiceHeader = ({
     setPtoVta,
-    factFiscBool,
     setFactFiscBool,
-    clienteBool,
     setClienteBool,
-    tipoDoc,
-    ndoc,
-    setTipoDoc,
-    setNdoc,
-    setRazSoc,
     setEmailCliente,
     setEnvioEmailBool,
-    razSoc,
-    formaPago,
     setFormaPago,
+    factFiscBool,
+    clienteBool,
+    formaPago,
     envioEmailBool,
     emailCliente,
     ptoVta,
-    invalidNdoc,
-    setInvalidNdoc,
     tfact,
     setTfact,
-    setCondIvaCli,
     setValidPV,
     setModal1,
-    modal1
+    modal1,
+    cliente,
+    setCliente,
+    userId,
+    setUserId,
 }) => {
-    const [ptoVtaList, setPtoVtaList] = useState(<option>No hay puntos de venta relacionados</option>)
-    const [cbteStr, setCbteStr] = useState("")
-    const [cuitSearchModal, setCuitSearchModal] = useState(false)
-    const [nroCbte, setNroCbte] = useState(0)
+    const [ptoVtaList, setPtoVtaList] = useState(<option>No hay puntos de venta relacionados</option>);
+    const [cbteStr, setCbteStr] = useState('');
+    const [nroCbte, setNroCbte] = useState(0);
+    const [clienteModalIsOpen, setClienteModalIsOpen] = useState(false);
+    const [users, setUsers] = useState([]);
+
+    const isAdmin = localStorage.getItem('isAdmin');
 
     const FormatearNroCte = useCallback(async () => {
-        const cbte = await CompleteCerosLeft(nroCbte, 8)
-        const pv = await CompleteCerosLeft(ptoVta.pv, 5)
-        setCbteStr(pv + "-" + cbte)
-    }, [nroCbte, ptoVta.pv])
+        const cbte = await CompleteCerosLeft(nroCbte, 8);
+        const pv = await CompleteCerosLeft(ptoVta.pv, 5);
+        setCbteStr(pv + '-' + cbte);
+    }, [nroCbte, ptoVta.pv]);
 
-    const cuitSearchToggle = () => {
-        setCuitSearchModal(!cuitSearchModal)
-    }
+    const getUsers = useCallback(async () => {
+        try {
+            const response = await axios.get(UrlNodeServer.usuariosDir.usuarios, {
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('user-token'),
+                },
+            });
+            const data = response.data.body.data;
+            setUsers(data);
+        } catch (error) {}
+    });
 
     const lastInvoice = useCallback(async () => {
-        let fiscalBool = "true"
+        let fiscalBool = 'true';
         if (parseInt(factFiscBool) === 0) {
-            fiscalBool = ""
+            fiscalBool = '';
         }
-        let query = `?pvId=${ptoVta.id}&fiscal=${fiscalBool}&tipo=${tfact}&entorno=`
+        let query = `?pvId=${ptoVta.id}&fiscal=${fiscalBool}&tipo=${tfact}&entorno=`;
 
-        await axios.get(UrlNodeServer.invoicesDir.sub.last + query, {
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-            }
-        })
-            .then(res => {
-                const response = res.data
-                const status = response.status
+        await axios
+            .get(UrlNodeServer.invoicesDir.sub.last + query, {
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('user-token'),
+                },
+            })
+            .then((res) => {
+                const response = res.data;
+                const status = response.status;
                 if (status === 200) {
-                    setNroCbte(parseInt(response.body.lastInvoice) + 1)
+                    setNroCbte(parseInt(response.body.lastInvoice) + 1);
                 } else {
-                    setNroCbte(1)
+                    setNroCbte(1);
                 }
             })
             .catch(() => {
-                setNroCbte(1)
-            })
-    }, [ptoVta.id, factFiscBool, tfact])
-
-
-    useEffect(() => {
-        lastInvoice()
-    }, [ptoVta, factFiscBool, lastInvoice])
+                setNroCbte(1);
+            });
+    }, [ptoVta.id, factFiscBool, tfact]);
 
     useEffect(() => {
-        FormatearNroCte()
-    }, [nroCbte, ptoVta, FormatearNroCte])
+        lastInvoice();
+    }, [ptoVta, factFiscBool, lastInvoice]);
+
+    useEffect(() => {
+        FormatearNroCte();
+    }, [nroCbte, ptoVta, FormatearNroCte]);
+
+    useEffect(() => {
+        isAdmin && getUsers();
+    }, []);
 
     return (
         <>
-            <ModalSearchCuit
-                cuitSearchToggle={cuitSearchToggle}
-                cuitSearchModal={cuitSearchModal}
-                setTipoDoc={setTipoDoc}
-                setEmailCliente={setEmailCliente}
-                setNdoc={setNdoc}
-                setRazSoc={setRazSoc}
-                setEnvioEmailBool={setEnvioEmailBool}
-                setCondIvaCli={setCondIvaCli}
+            <ClienteModal
+                cliente={cliente}
+                setCliente={setCliente}
+                isOpen={clienteModalIsOpen}
+                toggle={() => setClienteModalIsOpen(!clienteModalIsOpen)}
             />
             <Form>
                 <Row>
-                    <Col style={{ border: "2px solid red", padding: "15px", margin: 0 }} >
+                    <Col style={{ border: '2px solid red', padding: '15px', margin: 0 }}>
                         <Row>
                             <Col md="8">
                                 <Row>
-                                    <Col md="4" >
+                                    <Col md="4">
                                         <FormGroup>
                                             <Label for="exampleEmail">Fecha</Label>
-                                            <Input type="date" value={moment(new Date()).format("YYYY-MM-DD")} disabled />
+                                            <Input
+                                                type="date"
+                                                value={moment(new Date()).format('YYYY-MM-DD')}
+                                                disabled
+                                            />
                                         </FormGroup>
                                     </Col>
                                     <PtosVtas
@@ -127,42 +128,51 @@ const InvoiceHeader = ({
                                         colSize={6}
                                         setValidPV={setValidPV}
                                     />
-                                    <Col md="2" >
+                                    <Col md="2">
                                         <FormGroup>
                                             <Label for="factFiscTxt">Fiscal</Label>
-                                            <Input type="select" id="factFiscTxt" value={factFiscBool} onChange={e => setFactFiscBool(e.target.value)} >
+                                            <Input
+                                                type="select"
+                                                id="factFiscTxt"
+                                                value={factFiscBool}
+                                                onChange={(e) => setFactFiscBool(e.target.value)}
+                                            >
                                                 <option value={0}>No</option>
-                                                {
-                                                    ptoVta.cond_iva === 0 ? null :
-                                                        <option value={1}>Si</option>
-                                                }
+                                                {ptoVta.cond_iva === 0 ? null : <option value={1}>Si</option>}
                                             </Input>
                                         </FormGroup>
                                     </Col>
                                 </Row>
                             </Col>
-                            <Col md="4" >
+                            <Col md="4">
                                 <Row>
                                     <Col md="4">
                                         <FormGroup>
                                             <Label for="factFiscTxt">T. Fact.</Label>
-                                            <Input type="select" id="factFiscTxt" value={tfact} onChange={e => setTfact(e.target.value)} >
-                                                {
-                                                    parseInt(factFiscBool) === 1 ?
-                                                        ptoVta.cond_iva === 0 ?
-                                                            <option value={0}>X</option> :
-                                                            ptoVta.cond_iva === 1 ?
-                                                                parseInt(clienteBool) === 1 ?
-                                                                <>
-                                                                    <option value={1}>A</option>
-                                                                    <option value={6}>B</option>
-                                                                    </> :
-                                                                     <option value={6}>B</option>:
-                                                                <option value={11}>C</option> :
+                                            <Input
+                                                type="select"
+                                                id="factFiscTxt"
+                                                value={tfact}
+                                                onChange={(e) => setTfact(e.target.value)}
+                                            >
+                                                {parseInt(factFiscBool) === 1 ? (
+                                                    ptoVta.cond_iva === 0 ? (
                                                         <option value={0}>X</option>
-                                                }
-
-
+                                                    ) : ptoVta.cond_iva === 1 ? (
+                                                        parseInt(clienteBool) === 1 ? (
+                                                            <>
+                                                                <option value={1}>A</option>
+                                                                <option value={6}>B</option>
+                                                            </>
+                                                        ) : (
+                                                            <option value={6}>B</option>
+                                                        )
+                                                    ) : (
+                                                        <option value={11}>C</option>
+                                                    )
+                                                ) : (
+                                                    <option value={0}>X</option>
+                                                )}
                                             </Input>
                                         </FormGroup>
                                     </Col>
@@ -176,126 +186,155 @@ const InvoiceHeader = ({
                             </Col>
                         </Row>
                         <Row>
-                            <Col md="3" >
+                            <Col md="3">
                                 <FormGroup>
                                     <Label for="tipoClienteTxt">Cliente</Label>
-                                    <Input onChange={e => setClienteBool(e.target.value)} value={clienteBool} type="select" id="tipoClienteTxt" >
-                                        <option value={0} >Consumidor Final</option>
-                                        <option value={1} >Cliente Identificado</option>
+                                    <Input
+                                        onChange={(e) => setClienteBool(e.target.value)}
+                                        value={clienteBool}
+                                        type="select"
+                                        id="tipoClienteTxt"
+                                    >
+                                        <option value={0}>Consumidor Final</option>
+                                        <option value={1}>Cliente Identificado</option>
                                     </Input>
                                 </FormGroup>
                             </Col>
-                            {
-                                parseInt(clienteBool) === 1 ?
-                                    <>
-                                        <Col md="2" >
-                                            <FormGroup>
-                                                <Label for="factFiscTxt">Tipo Doc.</Label>
-                                                <Input type="select" id="factFiscTxt" value={tipoDoc} onChange={e => setTipoDoc(e.target.value)} >
-                                                    <option value={80}>CUIT</option>
-                                                    <option value={96}>DNI</option>
-                                                </Input>
-                                            </FormGroup>
-                                        </Col>
-                                        <NdocInput
-                                            tipoDoc={tipoDoc}
-                                            setTipoDoc={setTipoDoc}
-                                            ndoc={ndoc}
-                                            setNdoc={setNdoc}
-                                            setRazSoc={setRazSoc}
-                                            setEmailCliente={setEmailCliente}
-                                            setEnvioEmailBool={setEnvioEmailBool}
-                                            invalidNdoc={invalidNdoc}
-                                            setInvalidNdoc={setInvalidNdoc}
-                                            ptoVta={ptoVta}
-                                            setTfact={setTfact}
-                                            setCondIvaCli={setCondIvaCli}
-                                            factFiscBool={factFiscBool}
-                                            colSize={3}
-                                        />
+                            {parseInt(clienteBool) === 1 ? (
+                                <>
+                                    {cliente ? (
+                                        <>
+                                            <Col md="7">
+                                                <FormGroup>
+                                                    <Label for="ndocTxt">Cliente</Label>
+                                                    <Input
+                                                        style={{ fontSize: '0.8em' }}
+                                                        value={`${cliente.razsoc} (${
+                                                            parseInt(cliente.cuit) === 0
+                                                                ? 'CUIT ' + cliente.ndoc
+                                                                : 'DNI ' + cliente.ndoc
+                                                        })${
+                                                            cliente.entrega === null
+                                                                ? ''
+                                                                : ` | ${cliente.entrega}, ${cliente.provincia}, ${cliente.localidad}`
+                                                        }`}
+                                                        disabled
+                                                    />
+                                                </FormGroup>
+                                            </Col>
+                                            <Col md="1">
+                                                <Button
+                                                    style={{ marginTop: '30px' }}
+                                                    color="success"
+                                                    onClick={() => setClienteModalIsOpen(!clienteModalIsOpen)}
+                                                >
+                                                    Cambiar
+                                                </Button>
+                                            </Col>
+                                        </>
+                                    ) : (
                                         <Col md="4">
-                                            <Label for="razSocTxt">{parseInt(tipoDoc) === 80 ? "Raz. Soc." : "Nombre"}</Label>
-                                            <InputGroup>
-                                                <Input
-                                                    type="text"
-                                                    id="razSocTxt"
-                                                    value={razSoc}
-                                                    onChange={e => setRazSoc(e.target.value)}
-                                                    required
-                                                />
-                                                < InputGroupAddon addonType="append">
-                                                    <Button className="btn btn-info" onClick={(e) => {
-                                                        e.preventDefault();
-                                                        setCuitSearchModal(true);
-                                                    }} >
-                                                        <i className="fas fa-search" ></i>
-                                                    </Button>
-                                                </InputGroupAddon>
-                                            </ InputGroup>
+                                            <Button
+                                                style={{ marginTop: '30px' }}
+                                                color="success"
+                                                onClick={() => setClienteModalIsOpen(!clienteModalIsOpen)}
+                                            >
+                                                Seleccionar Cliente
+                                            </Button>
                                         </Col>
-                                    </> :
-                                    <></>
-                            }
+                                    )}
+                                </>
+                            ) : (
+                                <> </>
+                            )}
                         </Row>
                         <Row>
-                            <Col md={3} >
+                            <Col md={3}>
                                 <FormGroup>
                                     <Label for="factFiscTxt">Forma de Pago</Label>
                                     <Row>
                                         <Col md={parseInt(formaPago) === 0 ? 8 : 12}>
-                                            <Input type="select" value={formaPago} id="factFiscTxt" onChange={e => setFormaPago(e.target.value)} >
+                                            <Input
+                                                type="select"
+                                                value={formaPago}
+                                                id="factFiscTxt"
+                                                onChange={(e) => setFormaPago(e.target.value)}
+                                            >
                                                 <option value={0}>Efectivo</option>
-                                                {
-                                                    parseInt(factFiscBool) === 1 ?
-                                                        <>  <option value={1}>Mercado Pago</option>
-                                                            <option value={2}>Débito</option>
-                                                            <option value={3}>Crédito</option>
-                                                        </> : null
-                                                }
-                                                {
-                                                    parseInt(clienteBool) === 1 ?
-                                                        <option value={4}>Cuenta Corriente</option> :
-                                                        null
-                                                }
+                                                <option value={1}>Mercado Pago</option>
+                                                <option value={2}>Débito</option>
+                                                <option value={3}>Crédito</option>
+                                                <option value={6}>Cheque</option>
+                                                <option value={7}>Transferencia</option>
+                                                {parseInt(clienteBool) === 1 ? (
+                                                    <option value={4}>Cuenta Corriente</option>
+                                                ) : null}
                                                 <option value={5}>Varios Métodos</option>
                                             </Input>
                                         </Col>
-                                        {
-                                            parseInt(formaPago) === 0 ?
-                                                <Col>
-                                                    <Button color={"success"} onClick={() => setModal1(!modal1)}>
-                                                        Cambio
-                                                    </Button>
-                                                </Col> : null
-                                        }
+                                        {parseInt(formaPago) === 0 ? (
+                                            <Col>
+                                                <Button color={'success'} onClick={() => setModal1(!modal1)}>
+                                                    Cambio
+                                                </Button>
+                                            </Col>
+                                        ) : null}
                                     </Row>
                                 </FormGroup>
                             </Col>
-                            <Col md="3" >
-                                <Label for="factFiscTxt">Envíar Factura por Email</Label>
-                                <Input type="select" value={envioEmailBool} id="factFiscTxt" onChange={e => setEnvioEmailBool(e.target.value)} >
+                            {isAdmin && (
+                                <Col md="3">
+                                    <FormGroup>
+                                        <Label for="factFiscTxt">Vendedor</Label>
+                                        <Input
+                                            type="select"
+                                            value={userId}
+                                            id="factFiscTxt"
+                                            onChange={(e) => setUserId(e.target.value)}
+                                        >
+                                            <option value={false}>-</option>
+                                            {users.map((user) => (
+                                                <option key={user.id} value={user.id}>
+                                                    {user.nombre} {user.apellido}
+                                                </option>
+                                            ))}
+                                        </Input>
+                                    </FormGroup>
+                                </Col>
+                            )}
+                            <Col md="2">
+                                <Label for="factFiscTxt">Envíar Factura</Label>
+                                <Input
+                                    type="select"
+                                    value={envioEmailBool}
+                                    id="factFiscTxt"
+                                    onChange={(e) => setEnvioEmailBool(e.target.value)}
+                                >
                                     <option value={0}>No</option>
                                     <option value={1}>Si</option>
                                 </Input>
                             </Col>
-                            {
-                                parseInt(envioEmailBool) === 1 ?
-                                    <Col md="6">
-                                        <Label for="razSocTxt">Email Cliente</Label>
-                                        <FormGroup>
-                                            <Input type="text" id="razSocTxt" value={emailCliente} onChange={e => setEmailCliente(e.target.value)} />
-                                        </FormGroup>
-                                    </Col>
-                                    :
-                                    <></>
-                            }
+                            {parseInt(envioEmailBool) === 1 ? (
+                                <Col md="4">
+                                    <Label for="razSocTxt">Email Cliente</Label>
+                                    <FormGroup>
+                                        <Input
+                                            type="text"
+                                            id="razSocTxt"
+                                            value={emailCliente}
+                                            onChange={(e) => setEmailCliente(e.target.value)}
+                                        />
+                                    </FormGroup>
+                                </Col>
+                            ) : (
+                                <></>
+                            )}
                         </Row>
                     </Col>
                 </Row>
             </Form>
         </>
+    );
+};
 
-    )
-}
-
-export default InvoiceHeader
+export default InvoiceHeader;

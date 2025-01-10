@@ -96,10 +96,30 @@ const ModalChangeType = ({
                                 <FormGroup>
                                     <Label for="factFiscTxt">Forma de Pago</Label>
                                     <Input type="select" value={payType} id="typelist" onChange={e => setPayType(e.target.value)} >
-                                        <option value={0}>Efectivo</option>
-                                        <option value={1}>Mercado Pago</option>
-                                        <option value={2}>Débito</option>
-                                        <option value={3}>Crédito</option>
+                                        {
+                                            parseInt(item.forma_pago) !== 0 ?
+                                                <option value={0}>Efectivo</option> : null
+                                        }
+                                        {
+                                            parseInt(item.forma_pago) !== 1 ?
+                                                <option value={1}>Mercado Pago</option> : null
+                                        }
+                                        {
+                                            parseInt(item.forma_pago) !== 2 ?
+                                                <option value={2}>Débito</option> : null
+                                        }
+                                        {
+                                            parseInt(item.forma_pago) !== 3 ?
+                                                <option value={3}>Crédito</option> : null
+                                        }
+                                        {
+                                            parseInt(item.forma_pago) !== 6 ?
+                                                <option value={6}>Cheque</option> : null
+                                        }
+                                        {
+                                            parseInt(item.forma_pago) !== 7 ?
+                                                <option value={7}>Transferencia</option> : null
+                                        }                                       
                                     </Input>
                                 </FormGroup>
                             </ModalBody>

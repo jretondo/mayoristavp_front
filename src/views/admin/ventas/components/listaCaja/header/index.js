@@ -94,6 +94,7 @@ const HeaderListaCaja = ({
                             ptoVtaList={ptoVtaList}
                             ptoVta={ptosVta}
                             colSize={12}
+                            todos={true}
                         />
                     </Row>
                     <Row>

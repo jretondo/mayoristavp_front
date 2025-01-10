@@ -9,7 +9,8 @@ import UrlNodeServer from '../../../../../../api/NodeServer';
 const HeaderListaCaja = ({
     setListaCaja,
     pagina,
-    setLoading
+    setLoading,
+    actualizar
 }) => {
     const [ptosVta, setPtoVta] = useState({ id: 0 })
     const [ptoVtaList, setPtoVtaList] = useState(<option>No hay puntos de venta relacionados</option>)
@@ -51,7 +52,7 @@ const HeaderListaCaja = ({
     useEffect(() => {
         getDataInvoices()
         // eslint-disable-next-line
-    }, [pagina])
+    }, [pagina, actualizar])
 
     return (
         <Form onSubmit={e => {
@@ -67,6 +68,7 @@ const HeaderListaCaja = ({
                             ptoVtaList={ptoVtaList}
                             ptoVta={ptosVta}
                             colSize={4}
+                            todos={true}
                         />
                         <Col md="3">
                             <Label for="nroCbteTxt">Nº Cbte.</Label>

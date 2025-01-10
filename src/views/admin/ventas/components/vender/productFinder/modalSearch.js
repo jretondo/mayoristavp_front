@@ -1,38 +1,52 @@
 import React, { useEffect, useState } from 'react';
-import { Col, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row, Spinner } from 'reactstrap';
+import {
+    Col,
+    Form,
+    FormGroup,
+    Input,
+    Label,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    ModalHeader,
+    Row,
+    Spinner,
+} from 'reactstrap';
 import ListadoTable from 'components/subComponents/Listados/ListadoTable';
 import axios from 'axios';
 import UrlNodeServer from '../../../../../../api/NodeServer';
 import FilaProdSearch from 'components/subComponents/Listados/SubComponentes/filaPordSearch';
 
-const ModalSearchProd = ({
-    prodSearchModal,
-    prodSearchToggle,
-    setProdText,
-    findProd,
-    prodText
-}) => {
-    const [dataFind, setDataFind] = useState("")
-    const [loading, setLoading] = useState(false)
-    const [listaProd, setlistaProd] = useState(<tr style={{ textAlign: "center", width: "100%" }}>
-        <td> <span style={{ textAlign: "center", marginRight: "auto", marginLeft: "auto" }}> No hay productos encontrados</span></td>
-    </tr>)
+const ModalSearchProd = ({ prodSearchModal, prodSearchToggle, setProdText, findProd, prodText }) => {
+    const [loading, setLoading] = useState(false);
+    const [listaProd, setlistaProd] = useState(
+        <tr style={{ textAlign: 'center', width: '100%' }}>
+            <td>
+                {' '}
+                <span style={{ textAlign: 'center', marginRight: 'auto', marginLeft: 'auto' }}>
+                    {' '}
+                    No hay productos encontrados
+                </span>
+            </td>
+        </tr>,
+    );
 
-    const titulos = ["", "Producto", "Precio Final"]
+    const titulos = ['', 'Producto', 'Precio Final'];
 
     const Find = async () => {
-        setLoading(true)
-        await axios.get(UrlNodeServer.productsDir.products + `/1?query=${prodText}&cantPerPage=15`, {
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-            }
-        })
-            .then(res => {
-                setLoading(false)
-                const respuesta = res.data
-                const status = respuesta.status
+        setLoading(true);
+        await axios
+            .get(UrlNodeServer.productsDir.products + `/1?query=${prodText}&cantPerPage=15`, {
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('user-token'),
+                },
+            })
+            .then((res) => {
+                setLoading(false);
+                const respuesta = res.data;
+                const status = respuesta.status;
                 if (status === 200) {
-                    const data = respuesta.body.data
+                    const data = respuesta.body.data;
                     if (data.length > 0) {
                         setlistaProd(
                             // eslint-disable-next-line
@@ -44,46 +58,64 @@ const ModalSearchProd = ({
                                         id={key}
                                         setProdText={setProdText}
                                         prodSearchToggle={prodSearchToggle}
-                                        findProd={prodText}
-                                    />)
-                            })
-                        )
+                                        findProd={findProd}
+                                    />
+                                );
+                            }),
+                        );
                     } else {
-                        setlistaProd(<tr style={{ textAlign: "center", width: "100%" }}>
-                            <td> <span style={{ textAlign: "center", marginRight: "auto", marginLeft: "auto" }}> No hay productos encontrados</span></td>
-                        </tr>)
+                        setlistaProd(
+                            <tr style={{ textAlign: 'center', width: '100%' }}>
+                                <td>
+                                    {' '}
+                                    <span style={{ textAlign: 'center', marginRight: 'auto', marginLeft: 'auto' }}>
+                                        {' '}
+                                        No hay productos encontrados
+                                    </span>
+                                </td>
+                            </tr>,
+                        );
                     }
                 }
-            }).catch(() => {
-                setLoading(false)
-                setlistaProd(<tr style={{ textAlign: "center", width: "100%" }}>
-                    <td> <span style={{ textAlign: "center", marginRight: "auto", marginLeft: "auto" }}> No hay productos encontrados</span></td>
-                </tr>)
             })
-    }
+            .catch(() => {
+                setLoading(false);
+                setlistaProd(
+                    <tr style={{ textAlign: 'center', width: '100%' }}>
+                        <td>
+                            {' '}
+                            <span style={{ textAlign: 'center', marginRight: 'auto', marginLeft: 'auto' }}>
+                                {' '}
+                                No hay productos encontrados
+                            </span>
+                        </td>
+                    </tr>,
+                );
+            });
+    };
     useEffect(() => {
         setTimeout(() => {
             try {
-                document.getElementById("dataFindTxt").select()
-            } catch (error) {
-
-            }
+                document.getElementById('dataFindTxt').select();
+            } catch (error) {}
         }, 500);
-    }, [prodSearchModal])
+    }, [prodSearchModal]);
 
     useEffect(() => {
-        prodSearchModal &&  Find()
+        prodSearchModal && Find();
         // eslint-disable-next-line
-    }, [prodSearchModal])
+    }, [prodSearchModal]);
     return (
         <div>
-            <Modal isOpen={prodSearchModal} toggle={prodSearchToggle} size="lg" >
+            <Modal isOpen={prodSearchModal} toggle={prodSearchToggle} size="lg">
                 <ModalHeader toggle={prodSearchToggle}>Buscar Producto</ModalHeader>
                 <ModalBody>
-                    <Form onSubmit={e => {
-                        e.preventDefault();
-                        Find();
-                    }}>
+                    <Form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            Find();
+                        }}
+                    >
                         <Row>
                             <Col md="10">
                                 <FormGroup>
@@ -94,40 +126,32 @@ const ModalSearchProd = ({
                                         placeholder="Nombre, cod. de bara, proveedor, etc"
                                         value={prodText}
                                         required
-                                        onChange={e => {
+                                        onChange={(e) => {
                                             e.preventDefault();
-                                            setProdText(e.target.value)
+                                            setProdText(e.target.value);
                                         }}
                                     />
                                 </FormGroup>
                             </Col>
                             <Col md="2">
-                                <button
-                                    className='btn btn-primary'
-                                    style={{ marginTop: "31px" }}
-                                    type='submit'
-                                >
+                                <button className="btn btn-primary" style={{ marginTop: '31px' }} type="submit">
                                     Buscar
                                 </button>
                             </Col>
                         </Row>
                     </Form>
-                    {
-                        loading ?
-                            <div style={{ textAlign: "center" }}>
-                                <Spinner type="grow" color="blue" style={{ height: "150px", width: "150px" }} />
-                            </div> :
-                            <ListadoTable
-                                titulos={titulos}
-                                listado={listaProd}
-                            />
-                    }
+                    {loading ? (
+                        <div style={{ textAlign: 'center' }}>
+                            <Spinner type="grow" color="blue" style={{ height: '150px', width: '150px' }} />
+                        </div>
+                    ) : (
+                        <ListadoTable titulos={titulos} listado={listaProd} />
+                    )}
                 </ModalBody>
-                <ModalFooter>
-                </ModalFooter>
+                <ModalFooter></ModalFooter>
             </Modal>
         </div>
-    )
-}
+    );
+};
 
-export default ModalSearchProd
+export default ModalSearchProd;

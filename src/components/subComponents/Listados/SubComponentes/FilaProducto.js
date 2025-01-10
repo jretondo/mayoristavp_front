@@ -264,13 +264,17 @@ const FilaProducto = ({
                                 <i className="fas fa-plus"></i>
                                 Agregar Stock
                             </DropdownItem>
-                            <DropdownItem
+                            {
+                                /*
+                                  <DropdownItem
                                 href="#pablo"
                                 onClick={e => MoverStock(e)}
                             >
                                 <i className="fas fa-arrow-right"></i>
                                 Mover Stock
                             </DropdownItem>
+                                */
+                          }
                             <DropdownItem
                                 href="#pablo"
                                 onClick={e => VerDetalles(e, item.id_prod)}

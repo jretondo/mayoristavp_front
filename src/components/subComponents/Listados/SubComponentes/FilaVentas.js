@@ -32,7 +32,7 @@ const FilaVentas = ({
     const [modal1, setModal1] = useState(false)
     const [modal2, setModal2] = useState(false)
 
-    const getFact = async (idFact, send, type) => {
+    const getFact = async (idFact, send, type, noPrice) => {
         console.log('type :>> ', type);
         let query = ""
         let seguir = true
@@ -57,6 +57,9 @@ const FilaVentas = ({
                 urlGet = UrlNodeServer.clientesDir.sub.payments
             }
             setWait(true)
+            if (noPrice) {
+                query = "?noPrice=true"
+            }
             await axios.get(urlGet + "/" + idFact + query, {
                 responseType: 'arraybuffer',
                 headers: {
@@ -222,6 +225,16 @@ const FilaVentas = ({
                                     href="#pablo"
                                     onClick={e => {
                                         e.preventDefault(e)
+                                        getFact(item.id, false, parseFloat(item.t_fact), true)
+                                    }}
+                                >
+                                    <BsFileEarmarkPdfFill />
+                                    Ver Factura (Sin precios)
+                                </DropdownItem>
+                                <DropdownItem
+                                    href="#pablo"
+                                    onClick={e => {
+                                        e.preventDefault(e)
                                         setModal2(true)
                                     }}
                                     disabled={(parseFloat(item.total_fact) < 0 || parseInt(item.t_fact) < 0) ? true : false}
@@ -248,7 +261,7 @@ const FilaVentas = ({
                                     disabled={(parseFloat(item.total_fact) < 0 || parseInt(item.t_fact) < 0) ? true : false}
                                 >
                                     <BsFillXCircleFill />
-                                    Cancelar Factura
+                                    Generar Nota de Crédito
                                 </DropdownItem>
                                 {
                                     parseInt(item.id_fact_asoc) !== 0 ?

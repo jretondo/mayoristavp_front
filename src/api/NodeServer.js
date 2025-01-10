@@ -16,11 +16,12 @@ if (process.env.NODE_ENV === "development") {
     publicFiles = "https://api-prod.nekoadmin.com.ar/mayoristavp/static"
 }
 
-
 const prodImages = publicFiles + "/images/products/"
+const heroImages = publicFiles + "/images/heroSlider/"
 
 const publicFolder = {
-    prodImages
+    prodImages,
+    heroImages
 }
 
 const auth = host + "/auth"
@@ -35,6 +36,7 @@ const transportistas = host + "/transportistas"
 const usuarios = host + "/user"
 const stock = host + "/stock"
 const invoices = host + "/invoices"
+const heroSlider = host + "/heroSlider"
 
 const authDir = {
     auth
@@ -160,6 +162,15 @@ const routesDir = {
     }
 }
 
+const heroSliderDir = {
+    heroSlider,
+    sub: {
+        details: heroSlider + "/details",
+        enabled: heroSlider + "/enabled",
+    }
+
+}
+
 const UrlNodeServer = {
     publicFolder,
     authDir,
@@ -173,7 +184,8 @@ const UrlNodeServer = {
     transportistasDir,
     usuariosDir,
     stockDir,
-    invoicesDir
+    invoicesDir,
+    heroSliderDir
 }
 
 export default UrlNodeServer

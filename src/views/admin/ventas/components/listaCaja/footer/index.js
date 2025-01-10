@@ -19,9 +19,15 @@ const FooterListVentas = ({
             let credito = 0
             let ctacteRow = <></>
             let ctacte = 0
+            let cheque = 0
+            let chequeRow = <></>
+            let transf = 0
+            let transfRow = <></>
+
             const totales = listaCaja.totales
             const totales2 = listaCaja.totales2
             if (totales2.length > 0) {
+                // eslint-disable-next-line
                 totales2.map((item) => {
                     switch (parseInt(item.tipo)) {
                         case 0:
@@ -39,12 +45,17 @@ const FooterListVentas = ({
                         case 4:
                             ctacte = ctacte + parseFloat(item.SUMA)
                             break;
-                        default:
+                        case 6:
+                            cheque = cheque + parseFloat(item.SUMA)
+                            break;
+                        case 7:
+                            transf = transf + parseFloat(item.SUMA)
                             break;
                     }
                 })
             }
             if (totales.length > 0) {
+                // eslint-disable-next-line
                 totales.map((item) => {
                     switch (parseInt(item.forma_pago)) {
                         case 0:
@@ -62,54 +73,95 @@ const FooterListVentas = ({
                         case 4:
                             ctacte = ctacte + parseFloat(item.SUMA)
                             break;
+                        case 6:
+                            cheque = cheque + parseFloat(item.SUMA)
+                            break;
+                        case 7:
+                            transf = transf + parseFloat(item.SUMA)
+                            break;
                         default:
                             break;
                     }
                 })
             }
             if (totales.length > 0) {
-                if (efectivo !== 0) {
+                if (efectivo > 0) {
                     efectivoRow = <TotalItemsVtas
                         totalId={0}
                         totalImporte={efectivo}
                         colSize={4}
                     />
                 }
-                if (mercadoPago !== 0) {
+                if (mercadoPago > 0) {
                     mercadoPagoRow = <TotalItemsVtas
                         totalId={1}
                         totalImporte={mercadoPago}
                         colSize={4}
                     />
                 }
-                if (debito !== 0) {
+                if (debito > 0) {
                     debitoRow = <TotalItemsVtas
                         totalId={2}
                         totalImporte={debito}
                         colSize={4}
                     />
                 }
-                if (credito !== 0) {
+                if (credito > 0) {
                     creditoRow = <TotalItemsVtas
                         totalId={3}
                         totalImporte={credito}
                         colSize={4}
                     />
                 }
-                if (ctacte !== 0) {
+                if (ctacte > 0) {
                     ctacteRow = <TotalItemsVtas
                         totalId={4}
                         totalImporte={ctacte}
                         colSize={4}
                     />
                 }
-                setTotalesPlant(<>
-                    {efectivoRow}
-                    {mercadoPagoRow}
-                    {debitoRow}
-                    {creditoRow}
-                    {ctacteRow}
-                </>)
+                if (cheque > 0) {
+                    chequeRow = <TotalItemsVtas
+                        totalId={6}
+                        totalImporte={cheque}
+                        colSize={4}
+                    />
+                }
+                if (transf > 0) {
+                    transfRow = <TotalItemsVtas
+                        totalId={7}
+                        totalImporte={transf}
+                        colSize={4}
+                    />
+                }
+                const costoRow = <TotalItemsVtas
+                    totalId={-1}
+                    totalImporte={listaCaja.totalCosto}
+                    colSize={4}
+                />
+                const admin = localStorage.getItem("user-admin")
+                if (parseInt(admin) === 1) {
+                    setTotalesPlant(<>
+                        {efectivoRow}
+                        {mercadoPagoRow}
+                        {debitoRow}
+                        {creditoRow}
+                        {chequeRow}
+                        {transfRow}
+                        {ctacteRow}
+                    </>)
+                } else {
+                    setTotalesPlant(<>
+                        {efectivoRow}
+                        {mercadoPagoRow}
+                        {debitoRow}
+                        {creditoRow}
+                        {chequeRow}
+                        {transfRow}
+                        {ctacteRow}
+                    </>)
+                }
+
             } else {
                 setTotalesPlant(
                     <TotalItemsVtas
