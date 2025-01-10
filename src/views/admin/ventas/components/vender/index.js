@@ -11,7 +11,6 @@ import swal from 'sweetalert';
 import moment from 'moment';
 import axios from 'axios';
 import FileSaver from 'file-saver';
-import { verificadorCuit } from 'Function/VerificadorCuit';
 import ModalChange from './modalChange';
 import FormasPagoMod from './formasPago';
 
@@ -141,6 +140,7 @@ const Ventas = ({ setValidPV }) => {
                 setVariosPagos([]);
                 setEmailCliente('');
                 setCliente(false);
+                setUserId(localStorage.getItem('userId'));
                 if (envioEmailBool) {
                     swal(
                         'Nueva Factura!',
