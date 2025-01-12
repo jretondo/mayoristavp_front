@@ -21,7 +21,6 @@ const Ventas = ({ setValidPV }) => {
     const [envioEmailBool, setEnvioEmailBool] = useState(0);
     const [emailCliente, setEmailCliente] = useState('');
 
-    const [formaPago, setFormaPago] = useState(0);
     const [tfact, setTfact] = useState(1);
     const [processing, setProcessing] = useState(false);
     const [descuentoPerc, setDescuentoPer] = useState(0);
@@ -62,7 +61,7 @@ const Ventas = ({ setValidPV }) => {
                         fecha: moment(new Date()).format('YYYY-MM-DD'),
                         pv_id: ptoVta.id,
                         fiscal: factFiscBool,
-                        forma_pago: formaPago,
+                        forma_pago: 5,
                         enviar_email: envioEmailBool,
                         cliente_email: emailCliente,
                         lista_prod: productsSellList,
@@ -79,7 +78,7 @@ const Ventas = ({ setValidPV }) => {
                         fecha: moment(new Date()).format('YYYY-MM-DD'),
                         pv_id: ptoVta.id,
                         fiscal: factFiscBool,
-                        forma_pago: formaPago,
+                        forma_pago: 5,
                         enviar_email: envioEmailBool,
                         cliente_email: emailCliente,
                         cliente_bool: parseInt(clienteBool),
@@ -93,10 +92,7 @@ const Ventas = ({ setValidPV }) => {
                     user_id: userId,
                 };
             }
-            if (
-                parseInt(formaPago) === 5 &&
-                parseFloat(total) !== parseFloat(totalPrecio - totalPrecio * (descuentoPerc / 100))
-            ) {
+            if (parseFloat(total) !== parseFloat(totalPrecio - totalPrecio * (descuentoPerc / 100))) {
                 swal(
                     'Error: Total del pago!',
                     'Revise que el total del pago debe ser igual al total de la factura.',
@@ -123,9 +119,6 @@ const Ventas = ({ setValidPV }) => {
                 },
             })
             .then((res) => {
-                if (parseInt(formaPago) === 0) {
-                    setModal1(true);
-                }
                 let headerLine = res.headers['content-disposition'];
                 const largo = parseInt(headerLine.length);
                 let filename = headerLine.substring(21, largo);
@@ -133,7 +126,6 @@ const Ventas = ({ setValidPV }) => {
                 FileSaver.saveAs(blob, filename);
                 cancelarCompra();
                 setDescuentoPer(0);
-                setFormaPago(0);
                 setFactFiscBool(0);
                 setClienteBool(0);
                 setEnvioEmailBool(0);
@@ -195,6 +187,12 @@ const Ventas = ({ setValidPV }) => {
         cliente && setEmailCliente(cliente.email);
     }, [cliente]);
 
+    useEffect(() => {
+        if (parseInt(clienteBool) === 0) {
+            setCliente(false);
+        }
+    }, [clienteBool]);
+
     return (
         <Card>
             <ModalChange descuentoPerc={descuentoPerc} modal={modal1} toggle={() => setModal1(!modal1)} />
@@ -212,10 +210,8 @@ const Ventas = ({ setValidPV }) => {
                             setClienteBool={setClienteBool}
                             setEmailCliente={setEmailCliente}
                             setEnvioEmailBool={setEnvioEmailBool}
-                            setFormaPago={setFormaPago}
                             factFiscBool={factFiscBool}
                             clienteBool={clienteBool}
-                            formaPago={formaPago}
                             envioEmailBool={envioEmailBool}
                             emailCliente={emailCliente}
                             ptoVta={ptoVta}
@@ -239,12 +235,13 @@ const Ventas = ({ setValidPV }) => {
                             <Col md="6">
                                 <FormasPagoMod
                                     clienteBool={clienteBool}
-                                    formaPago={formaPago}
                                     variosPagos={variosPagos}
                                     setVariosPagos={setVariosPagos}
                                     factFiscBool={factFiscBool}
                                     total={total}
                                     setTotal={setTotal}
+                                    totalPrecio={totalPrecio}
+                                    cliente={cliente}
                                 />
                             </Col>
                             <Col md="6">

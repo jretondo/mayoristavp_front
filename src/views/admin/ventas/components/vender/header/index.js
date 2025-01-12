@@ -14,18 +14,14 @@ const InvoiceHeader = ({
     setClienteBool,
     setEmailCliente,
     setEnvioEmailBool,
-    setFormaPago,
     factFiscBool,
     clienteBool,
-    formaPago,
     envioEmailBool,
     emailCliente,
     ptoVta,
     tfact,
     setTfact,
     setValidPV,
-    setModal1,
-    modal1,
     cliente,
     setCliente,
     userId,
@@ -249,39 +245,6 @@ const InvoiceHeader = ({
                             )}
                         </Row>
                         <Row>
-                            <Col md={3}>
-                                <FormGroup>
-                                    <Label for="factFiscTxt">Forma de Pago</Label>
-                                    <Row>
-                                        <Col md={parseInt(formaPago) === 0 ? 8 : 12}>
-                                            <Input
-                                                type="select"
-                                                value={formaPago}
-                                                id="factFiscTxt"
-                                                onChange={(e) => setFormaPago(e.target.value)}
-                                            >
-                                                <option value={0}>Efectivo</option>
-                                                <option value={1}>Mercado Pago</option>
-                                                <option value={2}>Débito</option>
-                                                <option value={3}>Crédito</option>
-                                                <option value={6}>Cheque</option>
-                                                <option value={7}>Transferencia</option>
-                                                {parseInt(clienteBool) === 1 ? (
-                                                    <option value={4}>Cuenta Corriente</option>
-                                                ) : null}
-                                                <option value={5}>Varios Métodos</option>
-                                            </Input>
-                                        </Col>
-                                        {parseInt(formaPago) === 0 ? (
-                                            <Col>
-                                                <Button color={'success'} onClick={() => setModal1(!modal1)}>
-                                                    Cambio
-                                                </Button>
-                                            </Col>
-                                        ) : null}
-                                    </Row>
-                                </FormGroup>
-                            </Col>
                             {isAdmin && (
                                 <Col md="3">
                                     <FormGroup>

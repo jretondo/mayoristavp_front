@@ -7,194 +7,109 @@ import ModalPago from './modalPago';
 const FormasPagoMod = ({
     variosPagos,
     setVariosPagos,
-    formaPago,
     clienteBool,
     factFiscBool,
     total,
-    setTotal
+    setTotal,
+    totalPrecio,
+    cliente,
 }) => {
-    const [modal, setModal] = useState(false)
-    const [listado, setListado] = useState(<tr style={{ borderTop: "1px solid #e9ecef", borderBottom: "1px solid #e9ecef" }}><td>Aún no hay pagos registrados</td></tr>)
+    const [modal, setModal] = useState(false);
+    const [listado, setListado] = useState(
+        <tr style={{ borderTop: '1px solid #e9ecef', borderBottom: '1px solid #e9ecef' }}>
+            <td>Aún no hay pagos registrados</td>
+        </tr>,
+    );
 
-
-    
     const listarPagos = () => {
-        let efectivoRow = <></>
-        let efectivo = 0
-        let mercadoPagoRow = <></>
-        let mercadoPago = 0
-        let debitoRow = <></>
-        let debito = 0
-        let creditoRow = <></>
-        let credito = 0
-        let ctacteRow = <></>
-        let ctacte = 0
-        let cheque = 0
-        let chequeRow = <></>
-        let transf = 0
-        let transfRow = <></>
-        let TotalSuma = 0
         if (variosPagos.length > 0) {
             // eslint-disable-next-line
-            variosPagos.map((item, key) => {
-                TotalSuma = TotalSuma + parseFloat(item.importe)
-                switch (parseInt(item.tipo)) {
-                    case 0:
-                        efectivo = efectivo + parseFloat(item.importe)
-                        break;
-                    case 1:
-                        mercadoPago = mercadoPago + parseFloat(item.importe)
-                        break;
-                    case 2:
-                        debito = debito + parseFloat(item.importe)
-                        break;
-                    case 3:
-                        credito = credito + parseFloat(item.importe)
-                        break;
-                    case 4:
-                        ctacte = ctacte + parseFloat(item.importe)
-                        break;
-                    case 6:
-                        cheque = cheque + parseFloat(item.importe)
-                        break;
-                    case 7:
-                        transf = transf + parseFloat(item.importe)
-                        break;
-                    default:
-                        break;
-                }
-                if (key === (variosPagos.length - 1)) {
-                    if (efectivo > 0) {
-                        efectivoRow = <FilaPago
-                            tipo={0}
-                            tipoTxt="Efectivo"
-                            importe={efectivo}
+            setListado(
+                variosPagos.map((item, key) => {
+                    return (
+                        <FilaPago
+                            id={key}
+                            key={key}
+                            tipo={item.tipo}
+                            tipoTxt={item.tipo_txt}
+                            importe={item.importe}
                             variosPagos={variosPagos}
                             setVariosPagos={setVariosPagos}
                         />
-                    }
-                    if (mercadoPago > 0) {
-                        mercadoPagoRow = <FilaPago
-                            tipo={1}
-                            tipoTxt="Mercado Pago"
-                            importe={mercadoPago}
-                            variosPagos={variosPagos}
-                            setVariosPagos={setVariosPagos}
-                        />
-                    }
-                    if (debito > 0) {
-                        debitoRow = <FilaPago
-                            tipo={2}
-                            tipoTxt="Débito"
-                            importe={debito}
-                            variosPagos={variosPagos}
-                            setVariosPagos={setVariosPagos}
-                        />
-                    }
-                    if (credito > 0) {
-                        creditoRow = <FilaPago
-                            tipo={3}
-                            tipoTxt="Crédito"
-                            importe={credito}
-                            variosPagos={variosPagos}
-                            setVariosPagos={setVariosPagos}
-                        />
-                    }
-                    if (ctacte > 0) {
-                        ctacteRow = <FilaPago
-                            tipo={4}
-                            tipoTxt="Cuenta Corriente"
-                            importe={ctacte}
-                            variosPagos={variosPagos}
-                            setVariosPagos={setVariosPagos}
-                        />
-                    }
-                    if (cheque > 0) {
-                        chequeRow = <FilaPago
-                            tipo={6}
-                            tipoTxt="Cheque"
-                            importe={cheque}
-                            variosPagos={variosPagos}
-                            setVariosPagos={setVariosPagos}
-                        />
-                    }
-                    if (transf > 0) {
-                        transfRow = <FilaPago
-                            tipo={7}
-                            tipoTxt="Transferencia"
-                            importe={transf}
-                            variosPagos={variosPagos}
-                            setVariosPagos={setVariosPagos}
-                        />
-                    }
-                    setListado(<>
-                        {efectivoRow}
-                        {mercadoPagoRow}
-                        {debitoRow}
-                        {creditoRow}
-                        {ctacteRow}
-                        {chequeRow}
-                        {transfRow}
-                    </>)
-                    setTotal(TotalSuma)
-                }
-            })
+                    );
+                }),
+            );
+            setTotal(variosPagos.reduce((acc, item) => acc + item.importe, 0));
         } else {
-            setListado(<tr style={{ borderTop: "1px solid #e9ecef", borderBottom: "1px solid #e9ecef" }}><td>Aún no hay pagos registrados</td></tr>)
-            setTotal(0)
+            setListado(
+                <tr style={{ borderTop: '1px solid #e9ecef', borderBottom: '1px solid #e9ecef' }}>
+                    <td>Aún no hay pagos registrados</td>
+                </tr>,
+            );
+            setTotal(0);
         }
-
-    }
+    };
 
     useEffect(() => {
-        listarPagos()
-    }, [variosPagos])
+        listarPagos();
+    }, [variosPagos]);
 
-    if (parseInt(formaPago) === 5) {
-        return (
-            <>
-                <h2 style={{ textAlign: "center" }}>
-                    Pagos {" "}
-                    <Button color="success" style={{ borderRadius: "10%" }} onClick={e => {
-                        e.preventDefault()
-                        setModal(true)
-                    }}>
-                        <i className="fa fa-plus"></i>
-                    </Button>
-                </h2>
-                <Table className="align-items-center table-flush">
-                    <tbody>
-                        {listado}
-                    </tbody>
-                </Table>
+    return (
+        <>
+            <h2 style={{ textAlign: 'center' }}>Métodos de Pagos</h2>
+            <Table className="align-items-center table-flush">
+                <tbody>
+                    {listado}
+                    {totalPrecio > total && (
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td style={{ textAlign: 'left' }}>
+                                <Button
+                                    color="success"
+                                    style={{ borderRadius: '10%' }}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setModal(true);
+                                    }}
+                                >
+                                    <i className="fa fa-plus"></i>
+                                </Button>
+                            </td>
+                        </tr>
+                    )}
+                </tbody>
+            </Table>
 
-                <Row style={{ marginTop: "20px" }}>
-                    <Col md="4" style={{ marginLeft: "auto", textAlign: "right" }}>
-                        <Label style={{ fontSize: "25px", fontWeight: "bold" }} >
-                            Pago Total:
-                        </Label>
-                    </Col>
-                    <Col md="8" >
-                        <FormGroup>
-                            <Input style={{ fontSize: "20px", fontWeight: "bold", textAlign: "right" }} type="text" value={"$ " + formatMoney(total)} disabled />
-                        </FormGroup>
-                    </Col>
-                </Row>
+            <Row style={{ marginTop: '20px' }}>
+                <Col md="4" style={{ marginLeft: 'auto', textAlign: 'right' }}>
+                    <Label style={{ fontSize: '25px', fontWeight: 'bold' }}>Pago Total:</Label>
+                </Col>
+                <Col md="8">
+                    <FormGroup>
+                        <Input
+                            style={{ fontSize: '20px', fontWeight: 'bold', textAlign: 'right' }}
+                            type="text"
+                            value={'$ ' + formatMoney(total)}
+                            disabled
+                        />
+                    </FormGroup>
+                </Col>
+            </Row>
 
-                <ModalPago
-                    modal={modal}
-                    toggle={() => setModal(!modal)}
-                    variosPagos={variosPagos}
-                    setVariosPagos={setVariosPagos}
-                    clienteBool={clienteBool}
-                    factFiscBool={factFiscBool}
-                />
-            </>
-        )
-    } else {
-        return (null)
-    }
+            <ModalPago
+                modal={modal}
+                toggle={() => setModal(!modal)}
+                variosPagos={variosPagos}
+                setVariosPagos={setVariosPagos}
+                clienteBool={clienteBool}
+                factFiscBool={factFiscBool}
+                total={total}
+                totalPrecio={totalPrecio}
+                cliente={cliente}
+            />
+        </>
+    );
+};
 
-}
-
-export default FormasPagoMod
+export default FormasPagoMod;

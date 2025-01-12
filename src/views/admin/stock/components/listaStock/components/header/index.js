@@ -7,135 +7,161 @@ import ProveedoresMod from './proveedores';
 import PtosVtas from './ptosVta';
 import UrlNodeServer from '../../../../../../../api/NodeServer';
 import FilaOrden from './filaOrden';
+import FileSaver from 'file-saver';
 
-const HeaderUltMovStock = ({
-    setListaStock,
-    pagina,
-    setLoading,
-    moduleActive
-}) => {
-    const [ptosVta, setPtoVta] = useState({ id: "" })
-    const [ptoVtaList, setPtoVtaList] = useState(<option>No hay puntos de venta relacionados</option>)
-    const [marca, setMarca] = useState("")
-    const [marcasList, setMarcasList] = useState(<option value={""}>No hay marcas para listar</option>)
-    const [proveedor, setProveedor] = useState("")
-    const [proveedoresList, setProveedoresList] = useState(<option value={""}>No hay proveedores para listar</option>)
-    const [prodId, setProdId] = useState("")
-    const [group, setGroup] = useState(0)
-    const [asc, setAsc] = useState("")
+const HeaderUltMovStock = ({ setListaStock, pagina, setLoading, moduleActive, loading }) => {
+    const [ptosVta, setPtoVta] = useState({ id: '' });
+    const [ptoVtaList, setPtoVtaList] = useState(<option>No hay puntos de venta relacionados</option>);
+    const [marca, setMarca] = useState('');
+    const [marcasList, setMarcasList] = useState(<option value={''}>No hay marcas para listar</option>);
+    const [proveedor, setProveedor] = useState('');
+    const [proveedoresList, setProveedoresList] = useState(<option value={''}>No hay proveedores para listar</option>);
+    const [prodId, setProdId] = useState('');
+    const [group, setGroup] = useState(0);
+    const [asc, setAsc] = useState('');
     const [ordenlist, setOrdenList] = useState([
         {
             orden: 0,
-            title: "Nombre de Productos"
+            title: 'Nombre de Productos',
         },
         {
             orden: 1,
-            title: "Importe"
+            title: 'Importe',
         },
         {
             orden: 2,
-            title: "Marca"
+            title: 'Marca',
         },
         {
             orden: 3,
-            title: "Proveedor"
-        }
-    ])
-
+            title: 'Proveedor',
+        },
+    ]);
 
     const getList = async () => {
-        let query = `?prodId=${prodId}&pvId=${ptosVta.id}&cat=${proveedor}&subcat=${marca}&group=${group}&order=${JSON.stringify(ordenlist)}&desc=${asc}`
+        let query = `?prodId=${prodId}&pvId=${
+            ptosVta.id
+        }&cat=${proveedor}&subcat=${marca}&group=${group}&order=${JSON.stringify(ordenlist)}&desc=${asc}`;
 
-        setLoading(true)
-        await axios.get(UrlNodeServer.stockDir.sub.listaStock + "/" + pagina + query, {
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-            }
-        }).then(res => {
-            const respuesta = res.data
-            const status = respuesta.status
-            if (status === 200) {
-                const data = respuesta.body
-                setListaStock(data)
-            } else {
+        setLoading(true);
+        await axios
+            .get(UrlNodeServer.stockDir.sub.listaStock + '/' + pagina + query, {
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('user-token'),
+                },
+            })
+            .then((res) => {
+                const respuesta = res.data;
+                const status = respuesta.status;
+                if (status === 200) {
+                    const data = respuesta.body;
+                    setListaStock(data);
+                } else {
+                }
+            })
+            .catch((error) => {})
+            .finally(() => {
+                setLoading(false);
+            });
+    };
 
-            }
-        }).catch((error) => {
-
-        }).finally(() => {
-            setLoading(false)
-        })
-    }
+    const getPDF = async () => {
+        let query = `?prodId=${prodId}&pvId=${
+            ptosVta.id
+        }&cat=${proveedor}&subcat=${marca}&group=${group}&order=${JSON.stringify(ordenlist)}&desc=${asc}`;
+        setLoading(true);
+        await axios
+            .get(UrlNodeServer.stockDir.sub.listaStock + '/pdf' + query, {
+                responseType: 'arraybuffer',
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('user-token'),
+                    Accept: 'application/pdf',
+                },
+            })
+            .then((res) => {
+                let headerLine = res.headers['content-disposition'];
+                const largo = parseInt(headerLine.length);
+                let filename = headerLine.substring(21, largo);
+                var blob = new Blob([res.data], { type: 'application/pdf' });
+                FileSaver.saveAs(blob, filename);
+                swal('PDF generado', 'El archivo PDF se ha generado correctamente', 'success');
+            })
+            .catch((error) => {
+                swal('Error', 'No se ha podido generar el archivo PDF. Error:' + error, 'error');
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    };
 
     const subir = (ordenAnt) => {
-        let nvaLista = []
+        let nvaLista = [];
         // eslint-disable-next-line
         ordenlist.map((item, key) => {
             if (item.orden === ordenAnt) {
                 nvaLista.push({
                     orden: item.orden - 1,
-                    title: item.title
-                })
-            } else if (item.orden === (ordenAnt - 1)) {
+                    title: item.title,
+                });
+            } else if (item.orden === ordenAnt - 1) {
                 nvaLista.push({
                     orden: item.orden + 1,
-                    title: item.title
-                })
+                    title: item.title,
+                });
             } else {
                 nvaLista.push({
                     orden: item.orden,
-                    title: item.title
-                })
+                    title: item.title,
+                });
             }
             if (key === ordenlist.length - 1) {
-                nvaLista = nvaLista.sort((a, b) => a.orden - b.orden)
-                setOrdenList(() => [...nvaLista])
+                nvaLista = nvaLista.sort((a, b) => a.orden - b.orden);
+                setOrdenList(() => [...nvaLista]);
             }
-        })
-    }
+        });
+    };
     const bajar = (ordenAnt) => {
-        let nvaLista = []
+        let nvaLista = [];
         // eslint-disable-next-line
         ordenlist.map((item, key) => {
             if (item.orden === ordenAnt) {
                 nvaLista.push({
                     orden: item.orden + 1,
-                    title: item.title
-                })
-            } else if (item.orden === (ordenAnt + 1)) {
+                    title: item.title,
+                });
+            } else if (item.orden === ordenAnt + 1) {
                 nvaLista.push({
                     orden: item.orden - 1,
-                    title: item.title
-                })
+                    title: item.title,
+                });
             } else {
                 nvaLista.push({
                     orden: item.orden,
-                    title: item.title
-                })
+                    title: item.title,
+                });
             }
             if (key === ordenlist.length - 1) {
-                nvaLista = nvaLista.sort((a, b) => a.orden - b.orden)
-                setOrdenList(() => [...nvaLista])
+                nvaLista = nvaLista.sort((a, b) => a.orden - b.orden);
+                setOrdenList(() => [...nvaLista]);
             }
-        })
-    }
+        });
+    };
 
     useEffect(() => {
-        getList()
-    }, [pagina, moduleActive])
+        getList();
+    }, [pagina, moduleActive]);
 
     return (
-        <Form onSubmit={e => {
-            e.preventDefault()
-            getList()
-        }}>
+        <Form
+            onSubmit={(e) => {
+                e.preventDefault();
+                getList();
+            }}
+        >
             <Row>
                 <Col md="8">
                     <Row>
-                        <ProductosFiltro
-                            setProdId={setProdId}
-                            colSize={6}
-                        />
+                        <ProductosFiltro setProdId={setProdId} colSize={6} />
                         <PtosVtas
                             setPtoVta={setPtoVta}
                             setPtoVtaList={setPtoVtaList}
@@ -143,7 +169,6 @@ const HeaderUltMovStock = ({
                             ptoVta={ptosVta}
                             colSize={6}
                         />
-
                     </Row>
                     <Row>
                         <ProveedoresMod
@@ -163,7 +188,13 @@ const HeaderUltMovStock = ({
                         <Col>
                             <FormGroup>
                                 <Label for="exampleSelect">Agrupación</Label>
-                                <Input onChange={e => setGroup(e.target.value)} value={group} type="select" name="select" id="exampleSelect">
+                                <Input
+                                    onChange={(e) => setGroup(e.target.value)}
+                                    value={group}
+                                    type="select"
+                                    name="select"
+                                    id="exampleSelect"
+                                >
                                     <option value={0}>Por producto</option>
                                     <option value={1}>Por Marca</option>
                                     <option value={2}>Por Proveedor</option>
@@ -177,14 +208,20 @@ const HeaderUltMovStock = ({
                         <Col>
                             <Label for="exampleSelect">Orden</Label>
                         </Col>
-                        <Col style={{ textAlign: "left" }}>
-                            <Input value={asc} onChange={e => setAsc(e.target.value)} type="select" style={{ height: "25px", paddingTop: "2px", paddingBottom: "2px" }} id="exampleSelect">
-                                <option value={""} >Descendente</option>
+                        <Col style={{ textAlign: 'left' }}>
+                            <Input
+                                value={asc}
+                                onChange={(e) => setAsc(e.target.value)}
+                                type="select"
+                                style={{ height: '25px', paddingTop: '2px', paddingBottom: '2px' }}
+                                id="exampleSelect"
+                            >
+                                <option value={''}>Descendente</option>
                                 <option value={1}>Ascendente</option>
                             </Input>
                         </Col>
                     </Row>
-                    <Col md="12" style={{ border: "1px solid #cad1d7", padding: "8px", borderRadius: "0.375rem" }}>
+                    <Col md="12" style={{ border: '1px solid #cad1d7', padding: '8px', borderRadius: '0.375rem' }}>
                         {
                             // eslint-disable-next-line
                             ordenlist.map((item, key) => {
@@ -195,21 +232,33 @@ const HeaderUltMovStock = ({
                                         position={item.orden}
                                         bajar={bajar}
                                         subir={subir}
-                                    />)
+                                    />
+                                );
                             })
                         }
                     </Col>
                 </Col>
             </Row>
-            <Row style={{ marginBottom: "15px" }}>
+            <Row style={{ marginBottom: '15px' }}>
                 <Col>
-                    <Button color={"primary"} style={{ width: "200px" }}>
+                    <Button disabled={loading} type="submit" color={'success'} style={{ width: '200px' }}>
                         Listar Stock
+                    </Button>
+                    <Button
+                        onClick={(e) => {
+                            e.preventDefault();
+                            getPDF();
+                        }}
+                        color={'primary'}
+                        style={{ width: '200px', marginLeft: '30px' }}
+                        disabled={loading}
+                    >
+                        Descargar PDF
                     </Button>
                 </Col>
             </Row>
         </Form>
-    )
-}
+    );
+};
 
-export default HeaderUltMovStock
+export default HeaderUltMovStock;
