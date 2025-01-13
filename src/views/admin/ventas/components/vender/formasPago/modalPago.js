@@ -3,7 +3,17 @@ import { Modal, ModalBody, ModalFooter, ModalHeader, Row, Col, FormGroup, Label,
 import swal from 'sweetalert';
 import ModalChange from './modalChange';
 
-const ModalPago = ({ modal, toggle, setVariosPagos, clienteBool, factFiscBool, total, totalPrecio, cliente }) => {
+const ModalPago = ({
+    modal,
+    toggle,
+    setVariosPagos,
+    clienteBool,
+    factFiscBool,
+    total,
+    totalPrecio,
+    cliente,
+    descuentoPerc,
+}) => {
     const [pago, setPago] = useState({
         tipo: 0,
         tipo_txt: 'Efectivo',
@@ -69,7 +79,7 @@ const ModalPago = ({ modal, toggle, setVariosPagos, clienteBool, factFiscBool, t
             }
         }
         const totalParsed = Math.round(total * 100) / 100;
-        const totalPrecioParsed = Math.round(totalPrecio * 100) / 100;
+        const totalPrecioParsed = Math.round((totalPrecio - totalPrecio * (descuentoPerc / 100)) * 100) / 100;
         const importeParsed = Math.round(pago.importe * 100) / 100;
         if (totalParsed + importeParsed > totalPrecioParsed) {
             swal('El importe supera el total', '', 'warning');
@@ -132,7 +142,7 @@ const ModalPago = ({ modal, toggle, setVariosPagos, clienteBool, factFiscBool, t
 
         const diffTime = Math.abs(fechaVenc - hoy);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        if (diffDays > 30) {
+        if (fechaVenc < hoy && diffDays > 30) {
             swal({
                 title: 'La fecha de vencimiento no puede ser mayor a 30 días',
                 timer: 1500,
@@ -156,12 +166,12 @@ const ModalPago = ({ modal, toggle, setVariosPagos, clienteBool, factFiscBool, t
 
     useEffect(() => {
         const totalParsed = Math.round(total * 100) / 100;
-        const totalPrecioParsed = Math.round(totalPrecio * 100) / 100;
+        const totalPrecioParsed = Math.round((totalPrecio - totalPrecio * (descuentoPerc / 100)) * 100) / 100;
         setPago({
             ...pago,
             importe: Math.round((totalPrecioParsed - totalParsed) * 100) / 100,
         });
-    }, [totalPrecio, total]);
+    }, [totalPrecio, total, descuentoPerc]);
 
     useEffect(() => {
         if (!cliente || parseInt(clienteBool) === 0) {
@@ -176,7 +186,7 @@ const ModalPago = ({ modal, toggle, setVariosPagos, clienteBool, factFiscBool, t
 
     useEffect(() => {
         const totalParsed = Math.round(total * 100) / 100;
-        const totalPrecioParsed = Math.round(totalPrecio * 100) / 100;
+        const totalPrecioParsed = Math.round((totalPrecio - totalPrecio * (descuentoPerc / 100)) * 100) / 100;
         if (totalParsed === totalPrecioParsed) {
             modal && toggle();
         }

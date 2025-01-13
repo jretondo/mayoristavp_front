@@ -14,6 +14,10 @@ const DetailsInvoiceList = ({ details }) => {
                         Cantidad
                     </th>
                     <th scope="col" style={{ textAlign: 'center' }}>
+                        Descuento (%)
+                    </th>
+
+                    <th scope="col" style={{ textAlign: 'center' }}>
                         Total
                     </th>
                 </tr>
@@ -24,6 +28,7 @@ const DetailsInvoiceList = ({ details }) => {
                         <tr key={key}>
                             <td style={{ textAlign: 'center' }}>{detail.nombre_prod}</td>
                             <td style={{ textAlign: 'center' }}>{detail.cant_prod}</td>
+                            <td style={{ textAlign: 'center' }}>{detail.descuento_porcentaje} %</td>
                             <td style={{ textAlign: 'center' }}>$ {formatMoney(detail.total_prod)}</td>
                         </tr>
                     );

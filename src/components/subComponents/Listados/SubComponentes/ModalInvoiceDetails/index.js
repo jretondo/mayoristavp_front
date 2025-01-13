@@ -21,6 +21,7 @@ import ButtonOpenCollapse from '../../../../buttonOpen';
 import { useWindowSize } from '../../../../../Hooks/UseWindowSize';
 import DetailsInvoiceList from './details';
 import PaymentsInvoiceList from './payments';
+import formatMoney from '../../../../../Function/NumberFormat';
 
 const ModalInvoiceDetails = ({ setModal, modal, item }) => {
     const [loading, setLoading] = useState(false);
@@ -51,6 +52,10 @@ const ModalInvoiceDetails = ({ setModal, modal, item }) => {
                                     {' '}
                                     {item.letra} {CompleteCerosLeft(item.pv, 5)} - {CompleteCerosLeft(item.cbte, 8)}
                                 </span>
+                                <span style={{ color: '#0081c9', marginLeft: '15px' }}>
+                                    {' '}
+                                    Total: $ {formatMoney(item.total_fact)}
+                                </span>
                             </h3>
                             <ButtonGroup vertical={width > 1030 ? false : true}>
                                 <ButtonOpenCollapse action={toggleDetails} tittle={'Detalles'} active={detailsView} />
@@ -71,11 +76,13 @@ const ModalInvoiceDetails = ({ setModal, modal, item }) => {
                         </ModalBody>
                         <ModalFooter>
                             <Row>
+                                {/*
                                 <Col md="6">
                                     <button style={{ width: '130px', margin: '15px' }} className="btn btn-primary">
                                         Actualizar
                                     </button>
                                 </Col>
+                              */}
                                 <Col md="6">
                                     <button
                                         style={{ width: '130px', margin: '15px' }}
@@ -85,7 +92,7 @@ const ModalInvoiceDetails = ({ setModal, modal, item }) => {
                                             setModal(false);
                                         }}
                                     >
-                                        Cancelar
+                                        Cerrar
                                     </button>
                                 </Col>
                             </Row>

@@ -92,7 +92,7 @@ const Ventas = ({ setValidPV }) => {
                     user_id: userId,
                 };
             }
-            if (parseFloat(total) !== parseFloat(totalPrecio - totalPrecio * (descuentoPerc / 100))) {
+            if (parseFloat(total) !== Math.round((totalPrecio - totalPrecio * (descuentoPerc / 100)) * 100) / 100) {
                 swal(
                     'Error: Total del pago!',
                     'Revise que el total del pago debe ser igual al total de la factura.',
@@ -242,6 +242,7 @@ const Ventas = ({ setValidPV }) => {
                                     setTotal={setTotal}
                                     totalPrecio={totalPrecio}
                                     cliente={cliente}
+                                    descuentoPerc={descuentoPerc}
                                 />
                             </Col>
                             <Col md="6">

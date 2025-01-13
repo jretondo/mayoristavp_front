@@ -13,6 +13,7 @@ const FormasPagoMod = ({
     setTotal,
     totalPrecio,
     cliente,
+    descuentoPerc,
 }) => {
     const [modal, setModal] = useState(false);
     const [listado, setListado] = useState(
@@ -60,7 +61,7 @@ const FormasPagoMod = ({
             <Table className="align-items-center table-flush">
                 <tbody>
                     {listado}
-                    {totalPrecio > total && (
+                    {Math.round((totalPrecio - totalPrecio * (descuentoPerc / 100)) * 100) / 100 > total && (
                         <tr>
                             <td></td>
                             <td></td>
@@ -106,6 +107,7 @@ const FormasPagoMod = ({
                 factFiscBool={factFiscBool}
                 total={total}
                 totalPrecio={totalPrecio}
+                descuentoPerc={descuentoPerc}
                 cliente={cliente}
             />
         </>

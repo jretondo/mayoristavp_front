@@ -18,9 +18,11 @@ import PtosVtas from 'views/admin/ventas/components/vender/header/ptosVta';
 import axios from 'axios';
 import UrlNodeServer from '../../../../api/NodeServer';
 import FileSaver from 'file-saver';
-const ModalCobroCtaCte = ({ modal, toggle, clienteID, actualizar }) => {
+import FormasPagoMod from '../../ventas/components/vender/formasPago';
+const ModalCobroCtaCte = ({ modal, toggle, clienteID, actualizar, deudaTotal }) => {
     const [model, setModel] = useState('');
-    const [formaPago, setFormaPago] = useState(0);
+    //const [formaPago, setFormaPago] = useState(0);
+    const [pagos, setPagos] = useState([]);
     const [importe, setImporte] = useState('');
     const [ptoVtaList, setPtoVtaList] = useState(<option>No hay puntos de venta relacionados</option>);
     const [ptoVta, setPtoVta] = useState({ id: 0 });
@@ -29,12 +31,15 @@ const ModalCobroCtaCte = ({ modal, toggle, clienteID, actualizar }) => {
     const registrarCobro = () => {
         const data = {
             detalle: model,
-            formaPago: formaPago,
             importe: importe,
             clienteID: clienteID,
             pvId: ptoVta.id,
+            pagos: pagos,
         };
-
+        if (importe <= 0) {
+            swal('Importe incorrecto!', 'El importe debe ser mayor a 0', 'error');
+            return;
+        }
         swal({
             title: '¿Está seguro confirmar esta recepción de dinero?',
             text: 'Esta desición no tiene vuelta atrás y genera un movimiento de caja con su nombre',
@@ -113,34 +118,17 @@ const ModalCobroCtaCte = ({ modal, toggle, clienteID, actualizar }) => {
                             />
                         </Row>
                         <Row>
-                            <Col>
-                                <FormGroup>
-                                    <Label for="factFiscTxt">Forma de Pago</Label>
-                                    <Input
-                                        type="select"
-                                        value={formaPago}
-                                        id="factFiscTxt"
-                                        onChange={(e) => setFormaPago(e.target.value)}
-                                    >
-                                        <option value={0}>Efectivo</option>
-                                        <option value={1}>Mercado Pago</option>
-                                        <option value={2}>Débito</option>
-                                        <option value={3}>Crédito</option>
-                                        <option value={6}>Cheque</option>
-                                        <option value={7}>Transferencia</option>
-                                    </Input>
-                                </FormGroup>
-                            </Col>
-                            <Col>
-                                <FormGroup>
-                                    <Label for="factFiscTxt">Importe</Label>
-                                    <Input
-                                        type="number"
-                                        value={importe}
-                                        id="factFiscTxt"
-                                        onChange={(e) => setImporte(e.target.value)}
-                                    />
-                                </FormGroup>
+                            <Col md="12">
+                                <FormasPagoMod
+                                    clienteBool={false}
+                                    variosPagos={pagos}
+                                    setVariosPagos={setPagos}
+                                    total={importe}
+                                    setTotal={setImporte}
+                                    totalPrecio={deudaTotal}
+                                    cliente={false}
+                                    descuentoPerc={0}
+                                />
                             </Col>
                         </Row>
                     </ModalBody>
