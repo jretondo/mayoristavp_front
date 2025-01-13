@@ -1,27 +1,15 @@
 import React, { useState } from 'react';
 import ReactQuill from 'react-quill';
-import {
-    Button,
-    Col,
-    FormGroup,
-    Input,
-    Label,
-    Modal,
-    ModalBody,
-    ModalFooter,
-    ModalHeader,
-    Row,
-    Spinner,
-} from 'reactstrap';
+import { Button, Col, FormGroup, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row, Spinner } from 'reactstrap';
 import 'react-quill/dist/quill.snow.css';
 import PtosVtas from 'views/admin/ventas/components/vender/header/ptosVta';
 import axios from 'axios';
 import UrlNodeServer from '../../../../api/NodeServer';
 import FileSaver from 'file-saver';
 import FormasPagoMod from '../../ventas/components/vender/formasPago';
+
 const ModalCobroCtaCte = ({ modal, toggle, clienteID, actualizar, deudaTotal }) => {
     const [model, setModel] = useState('');
-    //const [formaPago, setFormaPago] = useState(0);
     const [pagos, setPagos] = useState([]);
     const [importe, setImporte] = useState('');
     const [ptoVtaList, setPtoVtaList] = useState(<option>No hay puntos de venta relacionados</option>);

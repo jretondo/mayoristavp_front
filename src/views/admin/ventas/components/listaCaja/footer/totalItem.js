@@ -2,55 +2,50 @@ import formatMoney from 'Function/NumberFormat';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Col, FormGroup, Input, Label } from 'reactstrap';
 
-const TotalItemsVtas = ({
-    id,
-    totalId,
-    totalImporte,
-    colSize
-}) => {
-    const [totalStr, setTotalStr] = useState("")
-    const [tituloStr, setTituloStr] = useState("")
+const TotalItemsVtas = ({ id, totalId, totalImporte, colSize }) => {
+    const [totalStr, setTotalStr] = useState('');
+    const [tituloStr, setTituloStr] = useState('');
 
     const format = useCallback(() => {
-        switch (parseInt(totalId)) {  
+        switch (parseInt(totalId)) {
             case 0:
-                setTituloStr("Total Efectivo")
+                setTituloStr('Total Efectivo');
                 break;
             case 1:
-                setTituloStr("Total Mercado Pago")
+                setTituloStr('Total Mercado Pago');
                 break;
             case 2:
-                setTituloStr("Total Dédito")
+                setTituloStr('Total Débito');
                 break;
             case 3:
-                setTituloStr("Total Crédito")
+                setTituloStr('Total Crédito');
                 break;
             case 4:
-                setTituloStr("Total Cuenta Corriente")
+                setTituloStr('Total Cuenta Corriente');
                 break;
             case 6:
-                setTituloStr("Total Cheques")
+                setTituloStr('Total Cheques');
                 break;
             case 7:
-                setTituloStr("Total Transferencias")
+                setTituloStr('Total Transferencias');
                 break;
         }
 
-        setTotalStr(formatMoney(totalImporte))
-    }, [totalId, totalImporte])
+        setTotalStr(formatMoney(totalImporte));
+    }, [totalId, totalImporte]);
 
     useEffect(() => {
-        format()
-    }, [format])
+        format();
+    }, [format]);
 
     return (
         <Col md={colSize} key={id}>
             <FormGroup>
                 <Label>{tituloStr}</Label>
-                <Input type="text" value={"$ " + totalStr} disabled />
+                <Input type="text" value={'$ ' + totalStr} disabled />
             </FormGroup>
         </Col>
-    )
-}
+    );
+};
 
-export default TotalItemsVtas
+export default TotalItemsVtas;
