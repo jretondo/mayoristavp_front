@@ -31,7 +31,7 @@ const ProdSellProvider = ({ children }) => {
                     if (status === 200) {
                         const data = {
                             ...respuesta.body.data[0],
-                            descuento: 0,
+                            descuento_porcentaje: 0,
                         };
                         if (parseInt(data.unidad) === 0) {
                             data.cant_prod = cant;
@@ -120,7 +120,7 @@ const ProdSellProvider = ({ children }) => {
     const aplicarDescuento = (key, descuento) => {
         const newList = productsSellList.map((item) => {
             if (item.key === key) {
-                item.descuento = descuento;
+                item.descuento_porcentaje = descuento;
             }
             return item;
         });

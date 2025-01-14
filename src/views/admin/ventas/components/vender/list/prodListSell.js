@@ -22,7 +22,7 @@ const ProdListSell = () => {
             let total = 0;
             setListProdVenta(
                 lista.map((item, key) => {
-                    total = total + item.vta_price * (1 - item.descuento / 100) * item.cant_prod;
+                    total = total + item.vta_price * (1 - item.descuento_porcentaje / 100) * item.cant_prod;
                     if (key === lista.length - 1) {
                         setTotalPrecio(total);
                     }

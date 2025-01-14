@@ -5,7 +5,7 @@ import productSellContext from '../../../../context/productsSell';
 const FilaProdSell = ({ id, item }) => {
     const [updateDiscount, setUpdateDiscount] = useState(false);
     const [updateQuantity, setUpdateQuantity] = useState(false);
-    const [newDiscount, setNewDiscount] = useState(item.descuento);
+    const [newDiscount, setNewDiscount] = useState(item.descuento_porcentaje);
     const [newQuantity, setNewQuantity] = useState(item.cant_prod);
     const { RemoveProduct, aplicarDescuento, cambiarCantidad } = useContext(productSellContext);
 
@@ -52,7 +52,7 @@ const FilaProdSell = ({ id, item }) => {
                 )}
             </td>
             <td style={{ textAlign: 'center' }}>
-                $ {formatMoney(item.vta_price - (item.vta_price * item.descuento) / 100)}
+                $ {formatMoney(item.vta_price - (item.vta_price * item.descuento_porcentaje) / 100)}
             </td>
             <td style={{ textAlign: 'center' }} onDoubleClick={() => actChangeDiscount()}>
                 {updateDiscount ? (
@@ -75,7 +75,7 @@ const FilaProdSell = ({ id, item }) => {
                         }}
                     />
                 ) : (
-                    item.descuento
+                    item.descuento_porcentaje
                 )}
             </td>
             {/*
@@ -85,7 +85,7 @@ const FilaProdSell = ({ id, item }) => {
             <td style={{ textAlign: 'center' }}>{item.iva}%</td>
             */}
             <td style={{ textAlign: 'center' }}>
-                $ {formatMoney((item.vta_price - (item.vta_price * item.descuento) / 100) * item.cant_prod)}
+                $ {formatMoney((item.vta_price - (item.vta_price * item.descuento_porcentaje) / 100) * item.cant_prod)}
             </td>
             <td className="text-right">
                 <button onClick={() => RemoveProduct(item.key)} className="btn btn-danger" style={{ round: '50%' }}>
