@@ -1,6 +1,6 @@
 import UrlNodeServer from 'api/NodeServer';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ProdSellContext from './index';
 import React from 'react';
 import moment from 'moment';
@@ -20,7 +20,7 @@ const ProdSellProvider = ({ children }) => {
             );
         } else {
             await axios
-                .get(UrlNodeServer.productsDir.products + `/1?query=${text}&cantPerPage=1`, {
+                .get(UrlNodeServer.productsDir.products + `/1?query=${text}&cantPerPage=1&stock=true`, {
                     headers: {
                         Authorization: 'Bearer ' + localStorage.getItem('user-token'),
                     },
@@ -29,6 +29,19 @@ const ProdSellProvider = ({ children }) => {
                     const respuesta = res.data;
                     const status = respuesta.status;
                     if (status === 200) {
+                        const stockProd = respuesta.body.data[0].stock;
+                        const stockAnterior = getQuantityProduct(respuesta.body.data[0].id_prod);
+                        const stockDisponible = stockProd - stockAnterior;
+                        if (parseInt(stockAnterior) + parseInt(cant) > stockProd) {
+                            swal(
+                                'Error!',
+                                'La cantidad de productos a vender supera el stock disponible. Controle la cantidad a vender! Stock Disponible: ' +
+                                    stockDisponible,
+                                'error',
+                            );
+                            return;
+                        }
+
                         const data = {
                             ...respuesta.body.data[0],
                             descuento_porcentaje: 0,
@@ -108,6 +121,16 @@ const ProdSellProvider = ({ children }) => {
                     setError(err);
                 });
         }
+    };
+
+    const getQuantityProduct = (id) => {
+        let stock = 0;
+        productsSellList.forEach((item) => {
+            if (item.id_prod === id) {
+                stock += parseInt(item.cant_prod);
+            }
+        });
+        return stock;
     };
 
     const RemoveProduct = (key) => {

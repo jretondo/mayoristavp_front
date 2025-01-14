@@ -36,11 +36,11 @@ const Ventas = ({ setValidPV }) => {
 
     const cancelar = () => {
         swal({
-            title: '¿Está seguro de canelar la compra?',
-            text: 'Esta desición elimibará todos los productos cargados en el carrito de compras.',
+            title: '¿Está seguro de cancelar la compra?',
+            text: 'Esta desición eliminará todos los productos cargados en el carrito de compras.',
             icon: 'warning',
             dangerMode: true,
-            buttons: ['Cancelar', 'Vacíar Carrito'],
+            buttons: ['No, seguir facturando', 'Si, vacíar carrito'],
         }).then((willDelete) => {
             if (willDelete) {
                 setClienteBool(0);
@@ -92,7 +92,11 @@ const Ventas = ({ setValidPV }) => {
                     user_id: userId,
                 };
             }
-            if (parseFloat(total) !== Math.round((totalPrecio - totalPrecio * (descuentoPerc / 100)) * 100) / 100) {
+            if (
+                totalPrecio === 0 ||
+                Math.round(total * 100) / 100 !==
+                    Math.round((totalPrecio - totalPrecio * (descuentoPerc / 100)) * 100) / 100
+            ) {
                 swal(
                     'Error: Total del pago!',
                     'Revise que el total del pago debe ser igual al total de la factura.',
@@ -346,8 +350,21 @@ const Ventas = ({ setValidPV }) => {
                         <Row style={{ marginTop: 0, textAlign: 'center' }}>
                             <Col>
                                 <button
-                                    className="btn btn-primary"
+                                    className={
+                                        totalPrecio === 0 ||
+                                        Math.round(total * 100) / 100 !==
+                                            Math.round((totalPrecio - totalPrecio * (descuentoPerc / 100)) * 100) / 100
+                                            ? 'btn btn-gray'
+                                            : 'btn btn-success'
+                                    }
                                     style={{ margin: '15px', width: '200px' }}
+                                    disabled={
+                                        totalPrecio === 0 ||
+                                        Math.round(total * 100) / 100 !==
+                                            Math.round((totalPrecio - totalPrecio * (descuentoPerc / 100)) * 100) / 100
+                                            ? true
+                                            : false
+                                    }
                                     onClick={(e) => {
                                         e.preventDefault();
                                         generarFactura();

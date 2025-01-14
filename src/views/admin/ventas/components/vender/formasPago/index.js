@@ -61,24 +61,26 @@ const FormasPagoMod = ({
             <Table className="align-items-center table-flush">
                 <tbody>
                     {listado}
-                    {Math.round((totalPrecio - totalPrecio * (descuentoPerc / 100)) * 100) / 100 > total && (
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td style={{ textAlign: 'left' }}>
-                                <Button
-                                    color="success"
-                                    style={{ borderRadius: '10%' }}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        setModal(true);
-                                    }}
-                                >
-                                    <i className="fa fa-plus"></i>
-                                </Button>
-                            </td>
-                        </tr>
-                    )}
+                    {totalPrecio === 0 ||
+                        (Math.round(total * 100) / 100 <
+                            Math.round((totalPrecio - totalPrecio * (descuentoPerc / 100)) * 100) / 100 && (
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td style={{ textAlign: 'left' }}>
+                                    <Button
+                                        color="success"
+                                        style={{ borderRadius: '10%' }}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setModal(true);
+                                        }}
+                                    >
+                                        <i className="fa fa-plus"></i>
+                                    </Button>
+                                </td>
+                            </tr>
+                        ))}
                 </tbody>
             </Table>
 
