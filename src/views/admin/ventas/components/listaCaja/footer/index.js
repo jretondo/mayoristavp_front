@@ -5,6 +5,7 @@ import TotalItemsVtas from './totalItem';
 const FooterListVentas = ({ listaCaja }) => {
     const [totalesPlant, setTotalesPlant] = useState(<></>);
     const [totalFinalPlant, setTotalFinalPlant] = useState(<></>);
+    const [totalCtaCtePlant, setTotalCtaCtePlant] = useState(<></>);
 
     useEffect(() => {
         try {
@@ -30,7 +31,7 @@ const FooterListVentas = ({ listaCaja }) => {
             if (totales2.length > 0) {
                 // eslint-disable-next-line
                 totales2.map((item) => {
-                    if (item.SUMA !== null && parseInt(item.forma_pago) !== 5) {
+                    if (item.SUMA !== null && parseInt(item.tipo) !== 5 && parseInt(item.tipo) !== 4) {
                         totalFinal = totalFinal + parseFloat(item.SUMA);
                     }
                     switch (parseInt(item.tipo)) {
@@ -61,7 +62,7 @@ const FooterListVentas = ({ listaCaja }) => {
             if (totales.length > 0) {
                 // eslint-disable-next-line
                 totales.map((item) => {
-                    if (item.SUMA !== null && parseInt(item.forma_pago) !== 5) {
+                    if (item.SUMA !== null && parseInt(item.forma_pago) !== 5 && parseInt(item.forma_pago) !== 4) {
                         totalFinal = totalFinal + parseFloat(item.SUMA);
                     }
 
@@ -106,7 +107,7 @@ const FooterListVentas = ({ listaCaja }) => {
                     creditoRow = <TotalItemsVtas totalId={3} totalImporte={credito} colSize={4} />;
                 }
                 if (ctacte !== 0) {
-                    ctacteRow = <TotalItemsVtas totalId={4} totalImporte={ctacte} colSize={4} />;
+                    ctacteRow = <TotalItemsVtas totalId={4} totalImporte={ctacte} colSize={6} />;
                 }
                 if (cheque !== 0) {
                     chequeRow = <TotalItemsVtas totalId={6} totalImporte={cheque} colSize={4} />;
@@ -114,7 +115,7 @@ const FooterListVentas = ({ listaCaja }) => {
                 if (transf !== 0) {
                     transfRow = <TotalItemsVtas totalId={7} totalImporte={transf} colSize={4} />;
                 }
-                console.log('totalFinal :>> ', totalFinal);
+                setTotalCtaCtePlant(ctacteRow);
                 setTotalFinalPlant(<TotalItemsVtas totalId={8} totalImporte={totalFinal} colSize={6} />);
                 const costoRow = <TotalItemsVtas totalId={-1} totalImporte={listaCaja.totalCosto} colSize={4} />;
                 const admin = localStorage.getItem('user-admin');
@@ -127,7 +128,6 @@ const FooterListVentas = ({ listaCaja }) => {
                             {creditoRow}
                             {chequeRow}
                             {transfRow}
-                            {ctacteRow}
                         </>,
                     );
                 } else {
@@ -139,7 +139,6 @@ const FooterListVentas = ({ listaCaja }) => {
                             {creditoRow}
                             {chequeRow}
                             {transfRow}
-                            {ctacteRow}
                         </>,
                     );
                 }
@@ -156,7 +155,10 @@ const FooterListVentas = ({ listaCaja }) => {
         <>
             <Row>{totalesPlant}</Row>
             <hr />
-            <Row>{totalFinalPlant}</Row>
+            <Row>
+                {totalFinalPlant}
+                {totalCtaCtePlant}
+            </Row>
         </>
     );
 };
