@@ -80,15 +80,17 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
         }
     };
 
-    const anularFact = async (idFact) => {
+    const anularFact = async (idFact, esRecibo) => {
         let seguir = false;
         const data = {
             id: idFact,
             fecha: moment(new Date()).format('YYYY-MM-DD'),
         };
         seguir = await swal({
-            title: '¿Está seguro de eliminar la factura?',
-            text: 'Esta operación no tiene retroceso y resta del total del listado.',
+            title: esRecibo ? '¿Está seguro de eliminar el recibo?' : '¿Está seguro de anular la factura?',
+            text: esRecibo
+                ? 'Esta operación no tiene retroceso y resta del total del listado. No genera una Nota de Crédito!'
+                : 'Esta operación no tiene retroceso y resta del total del listado.',
             icon: 'warning',
             buttons: true,
             dangerMode: true,
@@ -100,8 +102,12 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
 
         if (seguir) {
             setWait(true);
+            let urlPost = UrlNodeServer.invoicesDir.sub.notaCred;
+            if (esRecibo) {
+                urlPost = UrlNodeServer.clientesDir.sub.payments + '/delete';
+            }
             await axios
-                .post(UrlNodeServer.invoicesDir.sub.notaCred, data, {
+                .post(urlPost, data, {
                     responseType: 'arraybuffer',
                     headers: {
                         Authorization: 'Bearer ' + localStorage.getItem('user-token'),
@@ -109,13 +115,15 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
                     },
                 })
                 .then((res) => {
-                    let headerLine = res.headers['content-disposition'];
-                    const largo = parseInt(headerLine.length);
-                    let filename = headerLine.substring(21, largo);
-                    var blob = new Blob([res.data], { type: 'application/pdf' });
-                    FileSaver.saveAs(blob, filename);
+                    if (!esRecibo) {
+                        let headerLine = res.headers['content-disposition'];
+                        const largo = parseInt(headerLine.length);
+                        let filename = headerLine.substring(21, largo);
+                        var blob = new Blob([res.data], { type: 'application/pdf' });
+                        FileSaver.saveAs(blob, filename);
+                    }
                     setWait(false);
-                    swal('Anulación de Factura', 'La factura ha sido eliminada con éxito!', 'success');
+                    swal('Anulación de Factura', 'La factura ha sido anulada con éxito!', 'success');
                     setActualizar(!actualizar);
                 })
                 .catch((error) => {
@@ -239,14 +247,16 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
                                     href="#pablo"
                                     onClick={(e) => {
                                         e.preventDefault(e);
-                                        anularFact(item.id);
+                                        anularFact(item.id, parseInt(item.t_fact) === -1 ? true : false);
                                     }}
                                     disabled={
-                                        parseFloat(item.total_fact) < 0 || parseInt(item.t_fact) < 0 ? true : false
+                                        parseInt(item.id_fact_asoc) !== 0 || parseFloat(item.total_fact) < 0
+                                            ? true
+                                            : false
                                     }
                                 >
                                     <BsFillXCircleFill />
-                                    Generar Nota de Crédito
+                                    {parseInt(item.t_fact) === -1 ? 'Anular Recibo' : 'Anular Factura'}
                                 </DropdownItem>
                                 {parseInt(item.id_fact_asoc) !== 0 ? (
                                     <DropdownItem

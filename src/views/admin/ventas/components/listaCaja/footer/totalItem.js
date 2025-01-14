@@ -29,6 +29,9 @@ const TotalItemsVtas = ({ id, totalId, totalImporte, colSize }) => {
             case 7:
                 setTituloStr('Total Transferencias');
                 break;
+            case 8:
+                setTituloStr('Total Caja');
+                break;
         }
 
         setTotalStr(formatMoney(totalImporte));

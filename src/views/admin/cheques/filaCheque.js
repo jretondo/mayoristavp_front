@@ -14,9 +14,9 @@ const FilaCheque = ({ cheque, id, toggle }) => {
     const estadoString = (estado) => {
         switch (parseInt(estado)) {
             case 0:
-                return 'Pendiente de Pago';
+                return 'Pendiente de Cobro';
             case 1:
-                return 'Pagado';
+                return 'Cobrado';
             case 2:
                 return 'Rechazado';
             case 3:
