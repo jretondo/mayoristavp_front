@@ -85,7 +85,7 @@ var routes = [
     {
         path: '/bank-cheks',
         name: 'Administración de Cheques',
-        icon: 'ni ni-bag-17 text-red',
+        icon: 'ni ni-money-coins text-blue',
         component: Cheques,
         layout: process.env.PUBLIC_URL + '/admin',
         id: 11,

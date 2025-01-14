@@ -37,6 +37,7 @@ const usuarios = host + '/user';
 const stock = host + '/stock';
 const invoices = host + '/invoices';
 const heroSlider = host + '/heroSlider';
+const cheques = host + '/cheques';
 
 const authDir = {
     auth,
@@ -170,6 +171,13 @@ const heroSliderDir = {
     },
 };
 
+const chequesDir = {
+    cheques,
+    sub: {
+        details: cheques + '/details',
+    },
+};
+
 const UrlNodeServer = {
     publicFolder,
     authDir,
@@ -185,6 +193,7 @@ const UrlNodeServer = {
     stockDir,
     invoicesDir,
     heroSliderDir,
+    chequesDir,
 };
 
 export default UrlNodeServer;

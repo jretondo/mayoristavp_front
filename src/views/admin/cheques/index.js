@@ -1,36 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Spinner, Row, Col, Card, CardHeader, CardFooter } from 'reactstrap';
+import { Container, Spinner, Row, Col, Card, CardHeader, CardFooter, FormGroup, Label, Input } from 'reactstrap';
 import { Redirect } from 'react-router-dom';
 import UrlNodeServer from '../../../api/NodeServer';
-
-//My modules
-import AlertaForm from 'components/subComponents/Alertas/Alerta1';
 import Header from 'components/Headers/Header.js';
 import Paginacion from 'components/subComponents/Paginacion/Paginacion';
 import BusquedaForm from 'components/subComponents/Productos/BusquedaForm';
 import ListadoTable from 'components/subComponents/Listados/ListadoTable';
 import { UseSecureRoutes } from 'Hooks/UseSecureRoutes';
-import { useActividad } from '../../../Hooks/UseNvaActividad';
+import axios from 'axios';
+import FilaCheque from './filaCheque';
 
-const titulos = ['Nº', 'Banco', 'Emisión', 'Vencimiento', 'Importe', ''];
+const titulos = ['Nº', 'Banco', 'Emisión', 'Cobro', 'Importe', 'Estado', ''];
 
 const ChequesModule = () => {
-    //user massages
-    const [alertar, setAlertar] = useState(false);
-    const [msgStrongAlert, setMsgStrong] = useState('');
-    const [msgGralAlert, setMsgGralAlert] = useState('');
-    const [successAlert, setSuccessAlert] = useState(false);
-
-    //Activities
-    const [nvaActCall, setNvaActCall] = useState(false);
-    const [actividadStr, setActividadStr] = useState('');
-
     //Loadings
     const [esperar, setEsperar] = useState(false);
 
     //Search word
     const [busquedaBool, setBusquedaBool] = useState(false);
     const [palabraBuscada, setPalabraBuscada] = useState('');
+    const [estado, setEstado] = useState(false);
 
     //lists and UseFetch
     const [call, setCall] = useState(false);
@@ -39,9 +28,6 @@ const ChequesModule = () => {
     const [plantPaginas, setPlantPaginas] = useState(<></>);
     const [listado, setListado] = useState([]);
     const [dataList, setDataList] = useState([]);
-
-    //Custom Hooks
-    useActividad(nvaActCall, actividadStr);
 
     const { loading, error } = UseSecureRoutes(UrlNodeServer.routesDir.sub.proveedores, call);
 
@@ -53,9 +39,71 @@ const ChequesModule = () => {
     useEffect(() => {
         listaCheques();
         // eslint-disable-next-line
-    }, [call, pagina]);
+    }, [call, pagina, estado]);
 
-    const listaCheques = async () => {};
+    const listaCheques = async () => {
+        setEsperar(true);
+        await axios
+            .get(UrlNodeServer.chequesDir.cheques + '/' + pagina, {
+                params: {
+                    search: palabraBuscada,
+                    estado: estado,
+                },
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('user-token'),
+                },
+            })
+            .then((res) => {
+                const respuesta = res.data;
+                const status = parseInt(respuesta.status);
+                if (status === 200) {
+                    const body = respuesta.body;
+                    setDataList(body.pagesObj);
+                    setUltimaPag(body.pagesObj.totalPag);
+                    if (parseInt(body.pagesObj.totalPag) > 0) {
+                        setListado(
+                            body.data.map((item, key) => {
+                                let primero;
+                                if (key === 0) {
+                                    primero = true;
+                                } else {
+                                    primero = false;
+                                }
+                                return <FilaCheque key={key} id={key} cheque={item} toggle={() => setCall(!call)} />;
+                            }),
+                        );
+                    } else {
+                        setUltimaPag(1);
+                        setListado(
+                            <tr style={{ textAlign: 'center', width: '100%' }}>
+                                <td>
+                                    <span style={{ textAlign: 'center', marginRight: 'auto', marginLeft: 'auto' }}>
+                                        No hay cheques cargados con esos filtros
+                                    </span>
+                                </td>
+                            </tr>,
+                        );
+                    }
+                } else {
+                    setUltimaPag(1);
+                    setListado(
+                        <tr style={{ textAlign: 'center', width: '100%' }}>
+                            <td>
+                                <span style={{ textAlign: 'center', marginRight: 'auto', marginLeft: 'auto' }}>
+                                    No hay cheques cargados con esos filtros
+                                </span>
+                            </td>
+                        </tr>,
+                    );
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+            .finally(() => {
+                setEsperar(false);
+            });
+    };
 
     if (error) {
         return <Redirect className="text-light" to={process.env.PUBLIC_URL + '/'} />;
@@ -68,12 +116,6 @@ const ChequesModule = () => {
     } else {
         return (
             <>
-                <AlertaForm
-                    success={successAlert}
-                    msgStrong={msgStrongAlert}
-                    msgGral={msgGralAlert}
-                    alertar={alertar}
-                />
                 <Header />
                 <Container className="mt--7" fluid>
                     {esperar ? (
@@ -87,10 +129,28 @@ const ChequesModule = () => {
                                     <Card className="shadow">
                                         <CardHeader className="border-0">
                                             <Row>
-                                                <Col md="4">
+                                                <Col md="3">
                                                     <h2 className="mb-0">Lista de Cheques</h2>
                                                 </Col>
-                                                <Col md="8" style={{ textAlign: 'right' }}>
+                                                <Col md="4">
+                                                    <FormGroup>
+                                                        <Input
+                                                            type="select"
+                                                            name="select"
+                                                            id="exampleSelect"
+                                                            onChange={(e) => setEstado(e.target.value)}
+                                                            value={estado}
+                                                        >
+                                                            <option value={false}>Todos</option>
+                                                            <option value={'0'}>Pendiente de Cobro</option>
+                                                            <option value={'1'}>Cobrado</option>
+                                                            <option value={'2'}>Rechazado</option>
+                                                            <option value={'3'}>Vencido</option>
+                                                            <option value={'4'}>Usado como forma de pago</option>
+                                                        </Input>
+                                                    </FormGroup>
+                                                </Col>
+                                                <Col md="5" style={{ textAlign: 'right' }}>
                                                     <BusquedaForm
                                                         busquedaBool={busquedaBool}
                                                         setPalabraBuscada={setPalabraBuscada}
