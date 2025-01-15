@@ -2,7 +2,10 @@ import React from 'react';
 import { Table } from 'reactstrap';
 import formatMoney from '../../../../../../Function/NumberFormat';
 
-const DetailsInvoiceList = ({ details }) => {
+const DetailsInvoiceList = ({ details, detail, type }) => {
+    if (parseInt(type) < 1) {
+        return <div dangerouslySetInnerHTML={{ __html: detail }} />;
+    }
     return (
         <Table className="align-items-center table-flush" responsive>
             <thead className="thead-light">

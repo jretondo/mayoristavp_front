@@ -22,7 +22,6 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
     const [modal1, setModal1] = useState(false);
 
     const getFact = async (idFact, send, type, noPrice) => {
-        console.log('type :>> ', type);
         let query = '';
         let seguir = true;
         if (send) {
@@ -41,7 +40,7 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
 
         if (seguir) {
             let urlGet = UrlNodeServer.invoicesDir.sub.factDataPDF;
-            if (type === -1) {
+            if (type < 0) {
                 urlGet = UrlNodeServer.clientesDir.sub.payments;
             }
             setWait(true);

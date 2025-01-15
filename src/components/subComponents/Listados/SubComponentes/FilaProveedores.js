@@ -94,7 +94,7 @@ const FilaProducto = ({
                 <a href={`mailto:${item.email}`}> {item.email}</a>
             </td>
             <td style={{ textAlign: 'center' }}>
-                {item.condIva === 1 ? 'Res. Inscripto' : item.cond_iva === 2 ? 'Monotributista' : 'Cons. Final'}
+                {item.cond_iva === 1 ? 'Res. Inscripto' : item.cond_iva === 2 ? 'Monotributista' : 'Cons. Final'}
             </td>
             <td className="text-right">
                 <UncontrolledDropdown>

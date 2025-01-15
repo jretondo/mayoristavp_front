@@ -64,7 +64,7 @@ const ModalInvoiceDetails = ({ setModal, modal, item }) => {
                         </ModalHeader>
                         <ModalBody>
                             <Collapse isOpen={detailsView}>
-                                <DetailsInvoiceList details={item.details} />
+                                <DetailsInvoiceList details={item.details} detail={item.det_rbo} type={item.t_fact} />
                             </Collapse>
                             <Collapse isOpen={!detailsView}>
                                 <PaymentsInvoiceList

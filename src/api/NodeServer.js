@@ -100,6 +100,7 @@ const proveedoresDir = {
     proveedores,
     sub: {
         details: proveedores + '/details',
+        generateOP: proveedores + '/op',
     },
 };
 

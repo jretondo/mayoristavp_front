@@ -3,22 +3,20 @@ import { Button, Col, Form, FormFeedback, FormGroup, Input, Label, Row, Spinner 
 import UrlNodeServer from '../../../../../../../api/NodeServer';
 import axios from 'axios';
 
-const NewClientForm = ({ isValid, setIsValid, setPostToggled, toggleCliente, setCliente, toggle }) => {
+const NewProviderForm = ({ isValid, setIsValid, setPostToggled, toggleProvedor, setProvedor, toggle }) => {
     const [isWaiting, setIsWaiting] = useState(false);
-    const [newClient, setNewClient] = useState({
+    const [newProvider, setNewProvider] = useState({
         cuit: 0,
         ndoc: '',
         razsoc: '',
         telefono: '',
         email: '',
         cond_iva: 0,
-        direccion: '',
-        entrega: '',
-        provincia: '',
-        localidad: '',
+        fantasia: '',
+        obs: '',
     });
 
-    const newClientPost = async (e) => {
+    const newProviderPost = async (e) => {
         console.log('post');
         e && e.preventDefault();
         if (!isValid) {
@@ -27,7 +25,7 @@ const NewClientForm = ({ isValid, setIsValid, setPostToggled, toggleCliente, set
         }
         setIsWaiting(true);
         await axios
-            .post(UrlNodeServer.clientesDir.clientes, newClient, {
+            .post(UrlNodeServer.proveedoresDir.proveedores, newProvider, {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem('user-token'),
                 },
@@ -36,52 +34,44 @@ const NewClientForm = ({ isValid, setIsValid, setPostToggled, toggleCliente, set
                 const respuesta = res.data;
                 const status = parseInt(respuesta.status);
                 const id = respuesta.body.insertId;
-                await setCliente({ id, ...newClient });
+                await setProvedor({ id, ...newProvider });
                 if (status === 200) {
-                    await swal('Cliente Agregado', 'El cliente fue agregado correctamente', 'success');
+                    await swal('Provedor Agregado', 'El Provedor fue agregado correctamente', 'success');
                 } else {
-                    await swal('Error', 'No se pudo agregar el cliente, intente nuevamente', 'error');
+                    await swal('Error', 'No se pudo agregar el Provedor, intente nuevamente', 'error');
                 }
             })
             .catch(async (err) => {
                 console.log(err);
-                await swal('Error', 'No se pudo agregar el cliente, intente nuevamente', 'error');
+                await swal('Error', 'No se pudo agregar el Provedor, intente nuevamente', 'error');
             })
             .finally(() => {
-                setNewClient({
+                setNewProvider({
                     cuit: 0,
                     ndoc: '',
                     razsoc: '',
-                    telefono: 0,
+                    telefono: '',
                     email: '',
                     cond_iva: 0,
-                    direccion: '',
-                    entrega: '',
-                    provincia: '',
-                    localidad: '',
+                    fantasia: '',
+                    obs: '',
                 });
                 setPostToggled(false);
                 setIsWaiting(false);
-                toggleCliente();
+                toggleProvedor();
                 toggle();
             });
     };
 
     useEffect(() => {
-        if (
-            newClient.razsoc !== '' &&
-            newClient.ndoc !== 0 &&
-            newClient.entrega !== '' &&
-            newClient.provincia !== '' &&
-            newClient.localidad !== ''
-        ) {
+        if (newProvider.razsoc !== '' && newProvider.ndoc !== 0) {
             console.log('valido');
             setIsValid(true);
         } else {
             console.log('invalido');
             setIsValid(false);
         }
-    }, [newClient.razsoc, newClient.ndoc, newClient.entrega, newClient.provincia, newClient.localidad]);
+    }, [newProvider.razsoc, newProvider.ndoc]);
 
     if (isWaiting) {
         return (
@@ -92,10 +82,10 @@ const NewClientForm = ({ isValid, setIsValid, setPostToggled, toggleCliente, set
     }
 
     return (
-        <Form id="newClientForm" onSubmit={newClientPost}>
-            <h6 className="heading-small text-muted mb-4">Información del Cliente</h6>
+        <Form id="newProviderForm" onSubmit={newProviderPost}>
+            <h6 className="heading-small text-muted mb-4">Información del Proveedor</h6>
             <Row>
-                <Col lg="12">
+                <Col lg="8">
                     <FormGroup>
                         <label className="form-control-label" htmlFor="input-username">
                             Razón Social
@@ -105,8 +95,24 @@ const NewClientForm = ({ isValid, setIsValid, setPostToggled, toggleCliente, set
                             id="input-username"
                             placeholder="Razón Social..."
                             type="text"
-                            value={newClient.razsoc}
-                            onChange={(e) => setNewClient({ ...newClient, razsoc: e.target.value })}
+                            value={newProvider.razsoc}
+                            onChange={(e) => setNewProvider({ ...newProvider, razsoc: e.target.value })}
+                            required
+                        />
+                    </FormGroup>
+                </Col>
+                <Col lg="4">
+                    <FormGroup>
+                        <label className="form-control-label" htmlFor="input-username">
+                            Nombre de Fantasía
+                        </label>
+                        <Input
+                            className="form-control-alternative"
+                            id="input-username"
+                            placeholder="Nombre de Fantasía..."
+                            type="text"
+                            value={newProvider.fantasia}
+                            onChange={(e) => setNewProvider({ ...newProvider, fantasia: e.target.value })}
                             required
                         />
                     </FormGroup>
@@ -118,8 +124,8 @@ const NewClientForm = ({ isValid, setIsValid, setPostToggled, toggleCliente, set
                         <Label for="exampleSelect">Tipo. Doc.</Label>
                         <Input
                             type="select"
-                            onChange={(e) => setNewClient({ ...newClient, cuit: e.target.value })}
-                            value={newClient.cuit}
+                            onChange={(e) => setNewProvider({ ...newProvider, cuit: e.target.value })}
+                            value={newProvider.cuit}
                         >
                             <option value={0}>CUIT</option>
                             <option value={1}>DNI</option>
@@ -129,25 +135,25 @@ const NewClientForm = ({ isValid, setIsValid, setPostToggled, toggleCliente, set
                 <Col lg="6">
                     <FormGroup>
                         <label className="form-control-label" htmlFor="input-username">
-                            {parseInt(newClient.cuit) === 0 ? 'Nº de CUIT' : 'Nº de DNI'}
+                            {parseInt(newProvider.cuit) === 0 ? 'Nº de CUIT' : 'Nº de DNI'}
                         </label>
                         <Input
                             className="form-control-alternative"
                             id="input-username"
                             type="text"
-                            minLength={parseInt(newClient.cuit) === 0 ? 11 : 6}
-                            maxLength={parseInt(newClient.cuit) === 0 ? 11 : 8}
-                            value={newClient.ndoc}
+                            minLength={parseInt(newProvider.cuit) === 0 ? 11 : 6}
+                            maxLength={parseInt(newProvider.cuit) === 0 ? 11 : 8}
+                            value={newProvider.ndoc}
                             onKeyPress={(e) => {
                                 if ('0123456789'.includes(e.key) === false) {
                                     e.preventDefault();
                                 }
                             }}
-                            onChange={(e) => setNewClient({ ...newClient, ndoc: e.target.value })}
+                            onChange={(e) => setNewProvider({ ...newProvider, ndoc: e.target.value })}
                             required
                             invalid={
-                                newClient.ndoc.length > 0 &&
-                                newClient.ndoc.length < (parseInt(newClient.cuit) === 0 ? 11 : 6)
+                                newProvider.ndoc.length > 0 &&
+                                newProvider.ndoc.length < (parseInt(newProvider.cuit) === 0 ? 11 : 6)
                             }
                         />
                         <FormFeedback>No es número valido!</FormFeedback>
@@ -158,11 +164,11 @@ const NewClientForm = ({ isValid, setIsValid, setPostToggled, toggleCliente, set
                         <Label for="exampleSelect">Cond. IVA</Label>
                         <Input
                             type="select"
-                            onChange={(e) => setNewClient({ ...newClient, cond_iva: e.target.value })}
-                            value={newClient.cond_iva}
+                            onChange={(e) => setNewProvider({ ...newProvider, cond_iva: e.target.value })}
+                            value={newProvider.cond_iva}
                         >
                             <option value={0}>Cons. Final</option>
-                            {parseInt(newClient.cuit) == 0 ? (
+                            {parseInt(newProvider.cuit) == 0 ? (
                                 <>
                                     {' '}
                                     <option value={1}>Res. Inscripto</option>
@@ -185,8 +191,8 @@ const NewClientForm = ({ isValid, setIsValid, setPostToggled, toggleCliente, set
                             id="input-username"
                             placeholder="Casilla de email..."
                             type="email"
-                            value={newClient.email}
-                            onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
+                            value={newProvider.email}
+                            onChange={(e) => setNewProvider({ ...newProvider, email: e.target.value })}
                         />
                     </FormGroup>
                 </Col>
@@ -200,71 +206,8 @@ const NewClientForm = ({ isValid, setIsValid, setPostToggled, toggleCliente, set
                             id="input-username"
                             placeholder="Telefóno..."
                             type="text"
-                            value={newClient.telefono}
-                            onChange={(e) => setNewClient({ ...newClient, telefono: e.target.value })}
-                        />
-                    </FormGroup>
-                </Col>
-            </Row>
-            <Row>
-                <Col lg="12">
-                    <FormGroup>
-                        <label className="form-control-label" htmlFor="input-username">
-                            Direccion Fiscal
-                        </label>
-                        <Input
-                            className="form-control-alternative"
-                            placeholder="Direccion..."
-                            type="text"
-                            value={newClient.direccion}
-                            onChange={(e) => setNewClient({ ...newClient, direccion: e.target.value })}
-                        />
-                    </FormGroup>
-                </Col>
-            </Row>
-            <Row>
-                <Col lg="6">
-                    <FormGroup>
-                        <label className="form-control-label" htmlFor="input-username">
-                            Direccion de Entrega
-                        </label>
-                        <Input
-                            className="form-control-alternative"
-                            placeholder="Direccion..."
-                            type="text"
-                            value={newClient.entrega}
-                            onChange={(e) => setNewClient({ ...newClient, entrega: e.target.value })}
-                            required
-                        />
-                    </FormGroup>
-                </Col>
-                <Col lg="3">
-                    <FormGroup>
-                        <label className="form-control-label" htmlFor="input-username">
-                            Provincia
-                        </label>
-                        <Input
-                            className="form-control-alternative"
-                            placeholder="Provincia..."
-                            type="text"
-                            value={newClient.provincia}
-                            onChange={(e) => setNewClient({ ...newClient, provincia: e.target.value })}
-                            required
-                        />
-                    </FormGroup>
-                </Col>
-                <Col lg="3">
-                    <FormGroup>
-                        <label className="form-control-label" htmlFor="input-username">
-                            Localidad
-                        </label>
-                        <Input
-                            className="form-control-alternative"
-                            placeholder="Localidad..."
-                            type="text"
-                            value={newClient.localidad}
-                            onChange={(e) => setNewClient({ ...newClient, localidad: e.target.value })}
-                            required
+                            value={newProvider.telefono}
+                            onChange={(e) => setNewProvider({ ...newProvider, telefono: e.target.value })}
                         />
                     </FormGroup>
                 </Col>
@@ -274,4 +217,4 @@ const NewClientForm = ({ isValid, setIsValid, setPostToggled, toggleCliente, set
     );
 };
 
-export default NewClientForm;
+export default NewProviderForm;

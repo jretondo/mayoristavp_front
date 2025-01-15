@@ -6,31 +6,27 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Col, FormGroup, Input, Label, Row } from 'reactstrap';
 import PtosVtas from './ptosVta';
 import Form from 'reactstrap/lib/Form';
-import ClienteModal from './clienteModal/index';
+import ProvedorModal from './providerModal/index';
 
 const InvoiceHeader = ({
     setPtoVta,
-    setFactFiscBool,
-    setClienteBool,
-    setEmailCliente,
+    setProvedorBool,
+    setEmailProvedor,
     setEnvioEmailBool,
-    factFiscBool,
-    clienteBool,
+    proveedorBool,
     envioEmailBool,
-    emailCliente,
+    emailProvedor,
     ptoVta,
-    tfact,
-    setTfact,
     setValidPV,
-    cliente,
-    setCliente,
+    provedor,
+    setProvedor,
     userId,
     setUserId,
 }) => {
     const [ptoVtaList, setPtoVtaList] = useState(<option>No hay puntos de venta relacionados</option>);
     const [cbteStr, setCbteStr] = useState('');
     const [nroCbte, setNroCbte] = useState(0);
-    const [clienteModalIsOpen, setClienteModalIsOpen] = useState(false);
+    const [ProvedorModalIsOpen, setProvedorModalIsOpen] = useState(false);
     const [users, setUsers] = useState([]);
 
     const isAdmin = localStorage.getItem('isAdmin');
@@ -54,11 +50,7 @@ const InvoiceHeader = ({
     });
 
     const lastInvoice = useCallback(async () => {
-        let fiscalBool = 'true';
-        if (parseInt(factFiscBool) === 0) {
-            fiscalBool = '';
-        }
-        let query = `?pvId=${ptoVta.id}&fiscal=${fiscalBool}&tipo=${tfact}&entorno=`;
+        let query = `?pvId=${ptoVta.id}&fiscal=&tipo=-2&entorno=`;
 
         await axios
             .get(UrlNodeServer.invoicesDir.sub.last + query, {
@@ -78,11 +70,11 @@ const InvoiceHeader = ({
             .catch(() => {
                 setNroCbte(1);
             });
-    }, [ptoVta.id, factFiscBool, tfact]);
+    }, [ptoVta.id]);
 
     useEffect(() => {
         lastInvoice();
-    }, [ptoVta, factFiscBool, lastInvoice]);
+    }, [ptoVta, lastInvoice]);
 
     useEffect(() => {
         FormatearNroCte();
@@ -94,125 +86,65 @@ const InvoiceHeader = ({
 
     return (
         <>
-            <ClienteModal
-                cliente={cliente}
-                setCliente={setCliente}
-                isOpen={clienteModalIsOpen}
-                toggle={() => setClienteModalIsOpen(!clienteModalIsOpen)}
+            <ProvedorModal
+                Provedor={provedor}
+                setProvedor={setProvedor}
+                isOpen={ProvedorModalIsOpen}
+                toggle={() => setProvedorModalIsOpen(!ProvedorModalIsOpen)}
             />
             <Form>
                 <Row>
                     <Col style={{ border: '2px solid red', padding: '15px', margin: 0 }}>
                         <Row>
-                            <Col md="8">
-                                <Row>
-                                    <Col md="4">
-                                        <FormGroup>
-                                            <Label for="exampleEmail">Fecha</Label>
-                                            <Input
-                                                type="date"
-                                                value={moment(new Date()).format('YYYY-MM-DD')}
-                                                disabled
-                                            />
-                                        </FormGroup>
-                                    </Col>
-                                    <PtosVtas
-                                        setPtoVta={setPtoVta}
-                                        setPtoVtaList={setPtoVtaList}
-                                        ptoVtaList={ptoVtaList}
-                                        ptoVta={ptoVta}
-                                        colSize={6}
-                                        setValidPV={setValidPV}
-                                    />
-                                    <Col md="2">
-                                        <FormGroup>
-                                            <Label for="factFiscTxt">Fiscal</Label>
-                                            <Input
-                                                type="select"
-                                                id="factFiscTxt"
-                                                value={factFiscBool}
-                                                onChange={(e) => setFactFiscBool(e.target.value)}
-                                            >
-                                                <option value={0}>No</option>
-                                                {ptoVta.cond_iva === 0 ? null : <option value={1}>Si</option>}
-                                            </Input>
-                                        </FormGroup>
-                                    </Col>
-                                </Row>
+                            <Col md="3">
+                                <FormGroup>
+                                    <Label for="exampleEmail">Fecha</Label>
+                                    <Input type="date" value={moment(new Date()).format('YYYY-MM-DD')} disabled />
+                                </FormGroup>
                             </Col>
-                            <Col md="4">
-                                <Row>
-                                    <Col md="4">
-                                        <FormGroup>
-                                            <Label for="factFiscTxt">T. Fact.</Label>
-                                            <Input
-                                                type="select"
-                                                id="factFiscTxt"
-                                                value={tfact}
-                                                onChange={(e) => setTfact(e.target.value)}
-                                            >
-                                                {parseInt(factFiscBool) === 1 ? (
-                                                    ptoVta.cond_iva === 0 ? (
-                                                        <option value={0}>X</option>
-                                                    ) : ptoVta.cond_iva === 1 ? (
-                                                        parseInt(clienteBool) === 1 ? (
-                                                            <>
-                                                                <option value={1}>A</option>
-                                                                <option value={6}>B</option>
-                                                            </>
-                                                        ) : (
-                                                            <option value={6}>B</option>
-                                                        )
-                                                    ) : (
-                                                        <option value={11}>C</option>
-                                                    )
-                                                ) : (
-                                                    <option value={0}>X</option>
-                                                )}
-                                            </Input>
-                                        </FormGroup>
-                                    </Col>
-                                    <Col md="8">
-                                        <Label for="exampleEmail">Nº Comprobante</Label>
-                                        <FormGroup>
-                                            <Input type="text" id="exampleSelect" value={cbteStr} disabled />
-                                        </FormGroup>
-                                    </Col>
-                                </Row>
+                            <PtosVtas
+                                setPtoVta={setPtoVta}
+                                setPtoVtaList={setPtoVtaList}
+                                ptoVtaList={ptoVtaList}
+                                ptoVta={ptoVta}
+                                colSize={6}
+                                setValidPV={setValidPV}
+                            />
+                            <Col md="3">
+                                <Label for="exampleEmail">Nº Comprobante</Label>
+                                <FormGroup>
+                                    <Input type="text" id="exampleSelect" value={'OP | ' + cbteStr} disabled />
+                                </FormGroup>
                             </Col>
                         </Row>
                         <Row>
                             <Col md="3">
                                 <FormGroup>
-                                    <Label for="tipoClienteTxt">Cliente</Label>
+                                    <Label for="tipoProvedorTxt">Provedor</Label>
                                     <Input
-                                        onChange={(e) => setClienteBool(e.target.value)}
-                                        value={clienteBool}
+                                        onChange={(e) => setProvedorBool(e.target.value)}
+                                        value={proveedorBool}
                                         type="select"
-                                        id="tipoClienteTxt"
+                                        id="tipoProvedorTxt"
                                     >
                                         <option value={0}>Consumidor Final</option>
-                                        <option value={1}>Cliente Identificado</option>
+                                        <option value={1}>Provedor Identificado</option>
                                     </Input>
                                 </FormGroup>
                             </Col>
-                            {parseInt(clienteBool) === 1 ? (
+                            {parseInt(proveedorBool) === 1 ? (
                                 <>
-                                    {cliente ? (
+                                    {provedor ? (
                                         <>
                                             <Col md="7">
                                                 <FormGroup>
                                                     <Input
                                                         style={{ fontSize: '0.8em', marginTop: '30px' }}
-                                                        value={`${cliente.razsoc} (${
-                                                            parseInt(cliente.cuit) === 0
-                                                                ? 'CUIT ' + cliente.ndoc
-                                                                : 'DNI ' + cliente.ndoc
-                                                        })${
-                                                            cliente.entrega === null
-                                                                ? ''
-                                                                : ` | ${cliente.entrega}, ${cliente.provincia}, ${cliente.localidad}`
-                                                        }`}
+                                                        value={`${provedor.razsoc} (${
+                                                            parseInt(provedor.cuit) === 0
+                                                                ? 'CUIT ' + provedor.ndoc
+                                                                : 'DNI ' + provedor.ndoc
+                                                        })${` | Tel.: ${provedor.telefono} Email: ${provedor.email}`}`}
                                                         disabled
                                                     />
                                                 </FormGroup>
@@ -221,7 +153,7 @@ const InvoiceHeader = ({
                                                 <Button
                                                     style={{ marginTop: '30px' }}
                                                     color="success"
-                                                    onClick={() => setClienteModalIsOpen(!clienteModalIsOpen)}
+                                                    onClick={() => setProvedorModalIsOpen(!ProvedorModalIsOpen)}
                                                 >
                                                     Cambiar
                                                 </Button>
@@ -232,9 +164,9 @@ const InvoiceHeader = ({
                                             <Button
                                                 style={{ marginTop: '30px' }}
                                                 color="success"
-                                                onClick={() => setClienteModalIsOpen(!clienteModalIsOpen)}
+                                                onClick={() => setProvedorModalIsOpen(!ProvedorModalIsOpen)}
                                             >
-                                                Seleccionar Cliente
+                                                Seleccionar Provedor
                                             </Button>
                                         </Col>
                                     )}
@@ -278,13 +210,13 @@ const InvoiceHeader = ({
                             </Col>
                             {parseInt(envioEmailBool) === 1 ? (
                                 <Col md="4">
-                                    <Label for="razSocTxt">Email Cliente</Label>
+                                    <Label for="razSocTxt">Email Provedor</Label>
                                     <FormGroup>
                                         <Input
                                             type="text"
                                             id="razSocTxt"
-                                            value={emailCliente}
-                                            onChange={(e) => setEmailCliente(e.target.value)}
+                                            value={emailProvedor}
+                                            onChange={(e) => setEmailProvedor(e.target.value)}
                                         />
                                     </FormGroup>
                                 </Col>

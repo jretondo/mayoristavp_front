@@ -45,6 +45,17 @@ const FilaProdSell = ({ id, item }) => {
                                 cambiarCantidad(item.key, newQuantity);
                                 setUpdateQuantity(false);
                             }
+                            if (e.key === 'Escape') {
+                                setUpdateQuantity(false);
+                            }
+                        }}
+                        onBlur={() => {
+                            if (parseInt(newDiscount) < 0 || parseInt(newDiscount) > 100) {
+                                setUpdateQuantity(false);
+                                return;
+                            }
+                            cambiarCantidad(item.key, newQuantity);
+                            setUpdateQuantity(false);
                         }}
                     />
                 ) : (
@@ -72,6 +83,17 @@ const FilaProdSell = ({ id, item }) => {
                                 aplicarDescuento(item.key, newDiscount);
                                 setUpdateDiscount(false);
                             }
+                            if (e.key === 'Escape') {
+                                setUpdateDiscount(false);
+                            }
+                        }}
+                        onBlur={() => {
+                            if (parseInt(newDiscount) < 0 || parseInt(newDiscount) > 100) {
+                                setUpdateDiscount(false);
+                                return;
+                            }
+                            aplicarDescuento(item.key, newDiscount);
+                            setUpdateDiscount(false);
                         }}
                     />
                 ) : (
