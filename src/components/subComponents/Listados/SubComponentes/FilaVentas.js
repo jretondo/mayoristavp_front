@@ -65,9 +65,9 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
                     FileSaver.saveAs(blob, filename);
                     setWait(false);
                     if (send) {
-                        swal('Envío de factura', 'Factura envíada con éxito!', 'success');
+                        swal('Envío de factura', 'Comprobante envíada con éxito!', 'success');
                     } else {
-                        swal('Reimpresión de factura', 'Factura reimpresa con éxito!', 'success');
+                        swal('Reimpresión de factura', 'Comprobante reimpresa con éxito!', 'success');
                     }
                 })
                 .catch((error) => {
@@ -134,13 +134,13 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
                         FileSaver.saveAs(blob, filename);
                     }
                     setWait(false);
-                    swal('Anulación de Factura', 'La factura ha sido anulada con éxito!', 'success');
+                    swal('Anulación de Comprobante', 'La factura ha sido anulada con éxito!', 'success');
                     setActualizar(!actualizar);
                 })
                 .catch((error) => {
                     setWait(false);
                     swal(
-                        'Anulación de Factura',
+                        'Anulación de Comprobante',
                         `Hubo un error al querer anular la factura! \n\r Error: ${error}`,
                         'error',
                     );
@@ -232,7 +232,7 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
                                     }}
                                 >
                                     <BsFileEarmarkPdfFill />
-                                    Ver Factura
+                                    Ver Comprobante
                                 </DropdownItem>
                                 <DropdownItem
                                     href="#pablo"
@@ -242,7 +242,7 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
                                     }}
                                 >
                                     <BsFileEarmarkPdfFill />
-                                    Ver Factura (Sin precios)
+                                    Ver Comprobante (Sin precios)
                                 </DropdownItem>
                                 <DropdownItem
                                     href="#pablo"
@@ -252,7 +252,7 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
                                     }}
                                 >
                                     <BsTelegram />
-                                    Envíar Factura
+                                    Envíar Comprobante
                                 </DropdownItem>
                                 <DropdownItem
                                     href="#pablo"
@@ -269,7 +269,7 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
                                     }
                                 >
                                     <BsFillXCircleFill />
-                                    {parseInt(item.t_fact) === -1 ? 'Anular Recibo' : 'Anular Factura'}
+                                    {parseInt(item.t_fact) === -1 ? 'Anular Recibo' : 'Anular Comprobante'}
                                 </DropdownItem>
                                 <DropdownItem
                                     href="#pablo"
@@ -278,7 +278,9 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
                                         setModal2(!modal2);
                                     }}
                                     disabled={
-                                        parseInt(item.id_fact_asoc) !== 0 || parseFloat(item.total_fact) < 0
+                                        parseInt(item.id_fact_asoc) !== 0 ||
+                                        parseFloat(item.total_fact) < 0 ||
+                                        item.details.length === 0
                                             ? true
                                             : false
                                     }
@@ -295,7 +297,9 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
                                         }}
                                     >
                                         <BsFileEarmarkPdfFill />
-                                        {parseInt(item.nota_cred) === 0 ? 'Ver Nota de Crédito' : 'Ver Factura Anulada'}
+                                        {parseInt(item.nota_cred) === 0
+                                            ? 'Ver Nota de Crédito'
+                                            : 'Ver Comprobante Anulada'}
                                     </DropdownItem>
                                 ) : null}
                             </DropdownMenu>
