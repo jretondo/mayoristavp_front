@@ -177,17 +177,6 @@ const ModalPago = ({
     }, [totalPrecio, total, descuentoPerc]);
 
     useEffect(() => {
-        if (!cliente || parseInt(clienteBool) === 0) {
-            setPago({
-                ...pago,
-                tipo: 0,
-                tipo_txt: 'Efectivo',
-            });
-            setVariosPagos((variosPagos) => variosPagos.filter((item) => parseInt(item.tipo) !== 4));
-        }
-    }, [cliente, clienteBool]);
-
-    useEffect(() => {
         const totalParsed = Math.round(total * 100) / 100;
         const totalPrecioParsed = Math.round((totalPrecio - totalPrecio * (descuentoPerc / 100)) * 100) / 100;
         if (totalParsed === totalPrecioParsed) {
