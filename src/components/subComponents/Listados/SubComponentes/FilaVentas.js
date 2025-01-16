@@ -11,6 +11,7 @@ import swal from 'sweetalert';
 import { validateEmail } from 'Function/emailValidator';
 import FileSaver from 'file-saver';
 import ModalInvoiceDetails from './ModalInvoiceDetails';
+import ModalDevPart from './ModalDevPart';
 
 const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
     const [wait, setWait] = useState(false);
@@ -20,6 +21,7 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
     });
     const [tooltp, setTooltp] = useState(false);
     const [modal1, setModal1] = useState(false);
+    const [modal2, setModal2] = useState(false);
 
     const getFact = async (idFact, send, type, noPrice) => {
         let query = '';
@@ -77,6 +79,16 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
                     }
                 });
         }
+    };
+
+    const tieneItemsAnulados = (items) => {
+        let tiene = false;
+        items.forEach((item) => {
+            if (parseInt(item.cant_anulada) > 0) {
+                tiene = true;
+            }
+        });
+        return tiene;
     };
 
     const anularFact = async (idFact, esRecibo) => {
@@ -249,13 +261,30 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
                                         anularFact(item.id, parseInt(item.t_fact) === -1 ? true : false);
                                     }}
                                     disabled={
-                                        parseInt(item.id_fact_asoc) !== 0 || parseFloat(item.total_fact) < 0
+                                        parseInt(item.id_fact_asoc) !== 0 ||
+                                        parseFloat(item.total_fact) < 0 ||
+                                        tieneItemsAnulados(item.details)
                                             ? true
                                             : false
                                     }
                                 >
                                     <BsFillXCircleFill />
                                     {parseInt(item.t_fact) === -1 ? 'Anular Recibo' : 'Anular Factura'}
+                                </DropdownItem>
+                                <DropdownItem
+                                    href="#pablo"
+                                    onClick={(e) => {
+                                        e.preventDefault(e);
+                                        setModal2(!modal2);
+                                    }}
+                                    disabled={
+                                        parseInt(item.id_fact_asoc) !== 0 || parseFloat(item.total_fact) < 0
+                                            ? true
+                                            : false
+                                    }
+                                >
+                                    <BsFillXCircleFill />
+                                    Anularción parcial
                                 </DropdownItem>
                                 {parseInt(item.id_fact_asoc) !== 0 ? (
                                     <DropdownItem
@@ -275,6 +304,13 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
                 </td>
             </tr>
             <ModalInvoiceDetails setModal={setModal1} modal={modal1} item={item} />
+            <ModalDevPart
+                modal={modal2}
+                toggle={() => setModal2(!modal2)}
+                idFact={item.id}
+                actualizar={() => setActualizar(!actualizar)}
+                factura={item}
+            />
         </>
     );
 };

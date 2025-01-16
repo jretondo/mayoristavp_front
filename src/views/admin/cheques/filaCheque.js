@@ -229,7 +229,11 @@ const FilaCheque = ({ cheque, id, toggle }) => {
                                     href="#pablo"
                                     onClick={(e) => cambiarEstado(e, cheque.id, 0)}
                                     disabled={
-                                        parseInt(cheque.estado) === 0 || parseInt(cheque.estado) === 3 ? true : false
+                                        parseInt(cheque.estado) === 0 ||
+                                        parseInt(cheque.estado) === 3 ||
+                                        parseInt(cheque.estado) === 4
+                                            ? true
+                                            : false
                                     }
                                 >
                                     <i className="fas fa-undo"></i>

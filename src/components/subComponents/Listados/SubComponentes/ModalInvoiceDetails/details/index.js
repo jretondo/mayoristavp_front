@@ -3,7 +3,7 @@ import { Table } from 'reactstrap';
 import formatMoney from '../../../../../../Function/NumberFormat';
 
 const DetailsInvoiceList = ({ details, detail, type }) => {
-    if (parseInt(type) < 1) {
+    if (parseInt(type) < 0) {
         return <div dangerouslySetInnerHTML={{ __html: detail }} />;
     }
     return (

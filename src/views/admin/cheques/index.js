@@ -158,7 +158,8 @@ const ChequesModule = () => {
                                                         setBusquedaBool={setBusquedaBool}
                                                         call={call}
                                                         setCall={setCall}
-                                                        titulo="Buscar un cheque"
+                                                        titulo="Buscar un Cliente"
+                                                        setPagina={setPagina}
                                                     />
                                                 </Col>
                                             </Row>

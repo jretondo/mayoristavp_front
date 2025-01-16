@@ -38,8 +38,12 @@ const FilaProdSell = ({ id, item }) => {
                         onChange={(e) => setNewQuantity(e.target.value)}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
-                                if (parseInt(newQuantity) < 0) {
-                                    swal('Error', 'La cantidad no puede ser menor a 0', 'error');
+                                if (parseInt(newQuantity) <= 0) {
+                                    setUpdateQuantity(false);
+                                    return;
+                                }
+                                if (isNaN(parseInt(newQuantity))) {
+                                    setUpdateQuantity(false);
                                     return;
                                 }
                                 cambiarCantidad(item.key, newQuantity);
@@ -77,7 +81,12 @@ const FilaProdSell = ({ id, item }) => {
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
                                 if (parseInt(newDiscount) < 0 || parseInt(newDiscount) > 100) {
-                                    swal('Error', 'El descuento debe ser entre 0 y 100', 'error');
+                                    setUpdateDiscount(false);
+                                    return;
+                                }
+                                if (isNaN(parseInt(newDiscount))) {
+                                    aplicarDescuento(item.key, 0);
+                                    setUpdateDiscount(false);
                                     return;
                                 }
                                 aplicarDescuento(item.key, newDiscount);
@@ -89,6 +98,11 @@ const FilaProdSell = ({ id, item }) => {
                         }}
                         onBlur={() => {
                             if (parseInt(newDiscount) < 0 || parseInt(newDiscount) > 100) {
+                                setUpdateDiscount(false);
+                                return;
+                            }
+                            if (isNaN(parseInt(newDiscount))) {
+                                aplicarDescuento(item.key, 0);
                                 setUpdateDiscount(false);
                                 return;
                             }

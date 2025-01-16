@@ -123,10 +123,10 @@ const ProdSellProvider = ({ children }) => {
         }
     };
 
-    const getQuantityProduct = (id) => {
+    const getQuantityProduct = (id, id_actual) => {
         let stock = 0;
         productsSellList.forEach((item) => {
-            if (item.id_prod === id) {
+            if (item.id_prod === id && item.key !== id_actual) {
                 stock += parseInt(item.cant_prod);
             }
         });
@@ -151,8 +151,19 @@ const ProdSellProvider = ({ children }) => {
     };
 
     const cambiarCantidad = (key, cantidad) => {
+        const stockProd = getQuantityProduct(productsSellList.find((item) => item.key === key).id_prod, key);
         const newList = productsSellList.map((item) => {
             if (item.key === key) {
+                const stockDisponible = parseInt(item.stock) - parseInt(stockProd);
+                if (parseInt(cantidad) > stockDisponible) {
+                    swal(
+                        'Error!',
+                        'La cantidad de productos a vender supera el stock disponible. Controle la cantidad a vender! Stock Disponible: ' +
+                            stockDisponible,
+                        'error',
+                    );
+                    return item;
+                }
                 item.cant_prod = cantidad;
             }
             return item;
