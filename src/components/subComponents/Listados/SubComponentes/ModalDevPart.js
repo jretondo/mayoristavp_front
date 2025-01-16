@@ -35,6 +35,7 @@ const ModalDevPart = ({ modal, toggle, idFact, factura, actualizar }) => {
             cant_prod_original: 0,
             key: 0,
             cant_anulada: 0,
+            total_prod_original: 0,
         },
     ]);
     const [totalDelete, setTotalDelete] = useState(0);
@@ -62,10 +63,14 @@ const ModalDevPart = ({ modal, toggle, idFact, factura, actualizar }) => {
                                     id_prod: item.id_prod,
                                     nombre_prod: item.nombre_prod,
                                     cant_prod_original: item.cant_prod,
-                                    precio_ind: item.precio_ind,
+                                    precio_ind: roundNumber(
+                                        item.precio_ind -
+                                            roundNumber((item.precio_ind * item.descuento_porcentaje) / 100),
+                                    ),
                                     descuento_porcentaje: item.descuento_porcentaje,
                                     total_prod: item.total_prod,
                                     cant_anulada: item.cant_anulada,
+                                    total_prod_original: item.total_prod,
                                     cant_prod: 0,
                                     key: key,
                                 };
@@ -96,20 +101,11 @@ const ModalDevPart = ({ modal, toggle, idFact, factura, actualizar }) => {
         );
     };
 
-    useEffect(() => {
-        modal && getDetFact();
-        // eslint-disable-next-line
-    }, [modal, idFact]);
-
-    useEffect(() => {
-        let total = 0;
-        detDelete.forEach((item) => {
-            total += roundNumber(item.cant_prod * item.precio_ind);
-        });
-        setTotalDelete(total);
-    }, [detDelete]);
-
     const generarNC = async () => {
+        if (!quantityControl()) {
+            swal('Error!', 'La cantidad a anular no puede ser mayor a la cantidad original', 'error');
+            return;
+        }
         setLoading(true);
         const data = {
             fecha: moment(new Date()).format('YYYY-MM-DD'),
@@ -144,6 +140,29 @@ const ModalDevPart = ({ modal, toggle, idFact, factura, actualizar }) => {
             });
     };
 
+    const quantityControl = () => {
+        let control = true;
+        detDelete.forEach((item) => {
+            if (item.cant_prod > item.cant_prod_original - item.cant_anulada) {
+                control = false;
+            }
+        });
+        return control;
+    };
+
+    useEffect(() => {
+        modal && getDetFact();
+        // eslint-disable-next-line
+    }, [modal, idFact]);
+
+    useEffect(() => {
+        let total = 0;
+        detDelete.forEach((item) => {
+            total += roundNumber(item.cant_prod * item.precio_ind);
+        });
+        setTotalDelete(total);
+    }, [detDelete]);
+
     return (
         <Modal size="lg" isOpen={modal} toggle={toggle}>
             <ModalHeader toggle={toggle}>
@@ -167,15 +186,16 @@ const ModalDevPart = ({ modal, toggle, idFact, factura, actualizar }) => {
                                     ? detDelete.map((item, key) => (
                                           <>
                                               <Row key={key} style={{ marginTop: '15px' }}>
-                                                  <Col md="7">
+                                                  <Col md="8" className="p-1">
                                                       <Input
-                                                          value={`${item.nombre_prod} (${
+                                                          value={`(${
                                                               item.cant_prod_original - item.cant_anulada
-                                                          })`}
+                                                          } X $${formatMoney(item.precio_ind)}) | ${item.nombre_prod} `}
+                                                          style={{ fontSize: '12px' }}
                                                           disabled
                                                       />
                                                   </Col>
-                                                  <Col md="2">
+                                                  <Col md="2" className="p-1">
                                                       <Input
                                                           style={{ textAlign: 'right' }}
                                                           value={item.cant_prod}
@@ -183,9 +203,13 @@ const ModalDevPart = ({ modal, toggle, idFact, factura, actualizar }) => {
                                                           max={item.cant_prod_original - item.cant_anulada}
                                                           min={0}
                                                           onChange={(e) => changeQty(e, key)}
+                                                          disabled={
+                                                              item.cant_prod_original - item.cant_anulada === 0 ||
+                                                              item.total_prod_original === 0
+                                                          }
                                                       />
                                                   </Col>
-                                                  <Col md="3">
+                                                  <Col md="2" className="p-1">
                                                       <Input
                                                           style={{ textAlign: 'right' }}
                                                           value={'$ ' + formatMoney(item.cant_prod * item.precio_ind)}
