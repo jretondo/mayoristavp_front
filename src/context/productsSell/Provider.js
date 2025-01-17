@@ -123,6 +123,35 @@ const ProdSellProvider = ({ children }) => {
         }
     };
 
+    const getProductsFromOrderId = async (id) => {
+        await axios
+            .get(UrlNodeServer.orders + `/${id}`, {
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('user-token'),
+                },
+            })
+            .then((res) => {
+                const respuesta = res.data;
+                const status = respuesta.status;
+                if (status === 200) {
+                    const data = respuesta.body.data;
+                    const items = data.items;
+                    console.log('items :>> ', items);
+                    if (items && items.length > 0) {
+                        items.forEach((item) => {
+                            const data = {
+                                ...item,
+                                descuento_porcentaje: 0,
+                            };
+                            data.cant_prod = item.cant_prod;
+                            data.key = Math.random() * parseFloat(moment(new Date()).format('YYYYMMDDHHmmssms'));
+                            setProductsSellList((productsSellList) => [...productsSellList, data]);
+                        });
+                    }
+                }
+            });
+    };
+
     const getQuantityProduct = (id, id_actual) => {
         let stock = 0;
         productsSellList.forEach((item) => {
@@ -189,6 +218,7 @@ const ProdSellProvider = ({ children }) => {
                 aplicarDescuento,
                 setTotalPrecio,
                 cambiarCantidad,
+                getProductsFromOrderId,
             }}
         >
             {children}

@@ -179,6 +179,8 @@ const chequesDir = {
     },
 };
 
+const orders = host + '/pedidos';
+
 const UrlNodeServer = {
     publicFolder,
     authDir,
@@ -195,6 +197,7 @@ const UrlNodeServer = {
     invoicesDir,
     heroSliderDir,
     chequesDir,
+    orders,
 };
 
 export default UrlNodeServer;

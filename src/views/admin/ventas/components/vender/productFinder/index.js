@@ -14,8 +14,9 @@ const ProductFinder = () => {
     const [cantProd, setCantProd] = useState(1);
     const [camera, setCamera] = useState(false);
     const [prodSearchModal, setProdSearchModal] = useState(false);
+    const [orderId, setOrderId] = useState('');
 
-    const { NewProdSell, productsSellList, error } = useContext(productsSellContext);
+    const { NewProdSell, productsSellList, error, getProductsFromOrderId } = useContext(productsSellContext);
 
     const [play] = useSound(beepSfx);
 
@@ -83,7 +84,7 @@ const ProductFinder = () => {
                             />
                         </FormGroup>
                     </Col>
-                    <Col md="9">
+                    <Col md="6">
                         <Label for="prodTxtFinder">Producto</Label>
                         <InputGroup>
                             <Input
@@ -114,6 +115,36 @@ const ProductFinder = () => {
                                 </Button>
                             </InputGroupAddon>
                         </InputGroup>
+                    </Col>
+                    <Col md="3">
+                        <Row>
+                            <Col md="8">
+                                <FormGroup>
+                                    <Label for="prodOrderNumber">Cargar con pedido</Label>
+                                    <Input
+                                        type="text"
+                                        id="prodOrderNumber"
+                                        placeholder="Nro. de Pedido"
+                                        value={orderId}
+                                        onChange={(e) => {
+                                            setOrderId(e.target.value);
+                                        }}
+                                    />
+                                </FormGroup>
+                            </Col>
+                            <Col md="4">
+                                <Button
+                                    className="btn btn-success"
+                                    style={{ marginTop: '30px' }}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        getProductsFromOrderId(orderId);
+                                    }}
+                                >
+                                    <i className="fas fa-check"></i>
+                                </Button>
+                            </Col>
+                        </Row>
                     </Col>
                 </Row>
                 <Row>

@@ -15,7 +15,6 @@ const ProdListSell = () => {
     );
 
     const { productsSellList, setTotalPrecio } = useContext(productsSellContext);
-
     useEffect(() => {
         let lista = [];
         lista = productsSellList;
