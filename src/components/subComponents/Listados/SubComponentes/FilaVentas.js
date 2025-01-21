@@ -3,7 +3,7 @@ import formatMoney from 'Function/NumberFormat';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { DropdownItem, DropdownMenu, DropdownToggle, Spinner, UncontrolledDropdown, Button, Tooltip } from 'reactstrap';
-import { BsFileEarmarkPdfFill, BsTelegram, BsFillXCircleFill } from 'react-icons/bs';
+import { BsFileEarmarkPdfFill, BsTelegram, BsFillXCircleFill, BsCurrencyExchange } from 'react-icons/bs';
 import { FiInfo } from 'react-icons/fi';
 import axios from 'axios';
 import UrlNodeServer from '../../../../api/NodeServer';
@@ -12,6 +12,7 @@ import { validateEmail } from 'Function/emailValidator';
 import FileSaver from 'file-saver';
 import ModalInvoiceDetails from './ModalInvoiceDetails';
 import ModalDevPart from './ModalDevPart';
+import ModalFormasPagos from './ModalFormasPago';
 
 const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
     const [wait, setWait] = useState(false);
@@ -22,6 +23,7 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
     const [tooltp, setTooltp] = useState(false);
     const [modal1, setModal1] = useState(false);
     const [modal2, setModal2] = useState(false);
+    const [modal3, setModal3] = useState(false);
 
     const getFact = async (idFact, send, type, noPrice) => {
         let query = '';
@@ -158,6 +160,26 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
         });
     };
 
+    const pagoString = (formaPago) => {
+        switch (parseInt(formaPago)) {
+            case 0:
+                return 'Efvo.';
+            case 1:
+                return 'MP';
+            case 2:
+                return 'Débito';
+            case 3:
+                return 'Crédito';
+            case 4:
+                return 'Cta. Cte.';
+            case 6:
+                return 'Cheque';
+            case 7:
+                return 'Transf.';
+            default:
+        }
+    };
+
     const toggleDetails = (e, item) => {
         e.preventDefault();
         setModal1(true);
@@ -204,6 +226,15 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
                     >
                         Ver Detalles
                     </Tooltip>
+                </td>
+                <td>
+                    {item.pagos.map((item, key) => {
+                        return (
+                            <div key={key} style={{ textAlign: 'center' }}>
+                                {pagoString(item.tipo)}: $ {formatMoney(item.importe)}
+                            </div>
+                        );
+                    })}
                 </td>
                 <td style={{ textAlign: 'center' }}>$ {formatMoney(item.total_fact)}</td>
                 <td className="text-right">
@@ -302,6 +333,23 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
                                             : 'Ver Comprobante Anulada'}
                                     </DropdownItem>
                                 ) : null}
+                                <DropdownItem
+                                    href="#pablo"
+                                    onClick={(e) => {
+                                        e.preventDefault(e);
+                                        setModal3(true);
+                                    }}
+                                    disabled={
+                                        parseInt(item.id_fact_asoc) !== 0 ||
+                                        parseFloat(item.total_fact) < 0 ||
+                                        item.pagos.length === 0
+                                            ? true
+                                            : false
+                                    }
+                                >
+                                    <BsCurrencyExchange />
+                                    Cambiar Forma de Pago
+                                </DropdownItem>
                             </DropdownMenu>
                         </UncontrolledDropdown>
                     )}
@@ -314,6 +362,14 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
                 idFact={item.id}
                 actualizar={() => setActualizar(!actualizar)}
                 factura={item}
+            />
+            <ModalFormasPagos
+                modal={modal3}
+                toggle={() => setModal3(!modal3)}
+                idFact={item.id}
+                factura={item}
+                actualizar={() => setActualizar(!actualizar)}
+                variosPagos={item.pagos}
             />
         </>
     );

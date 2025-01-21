@@ -143,11 +143,13 @@ const FooterListVentas = ({ listaCaja }) => {
                     );
                 }
             } else {
-                setTotalesPlant(<TotalItemsVtas totalId={null} totalImporte={0} colSize={6} />);
+                setTotalFinalPlant(<TotalItemsVtas totalId={8} totalImporte={0} colSize={6} />);
+                setTotalCtaCtePlant(<TotalItemsVtas totalId={4} totalImporte={0} colSize={6} />);
             }
         } catch (error) {
             console.log('error :>> ', error);
-            setTotalesPlant(<TotalItemsVtas totalId={null} totalImporte={0} colSize={6} />);
+            setTotalFinalPlant(<TotalItemsVtas totalId={8} totalImporte={0} colSize={6} />);
+            setTotalCtaCtePlant(<TotalItemsVtas totalId={4} totalImporte={0} colSize={6} />);
         }
     }, [listaCaja]);
 

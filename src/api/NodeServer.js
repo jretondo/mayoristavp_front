@@ -145,6 +145,7 @@ const invoicesDir = {
         notaCredPart: invoices + '/notaCredPart',
         codigoDescuento: invoices + '/codigoDescuento',
         verificaCodigo: invoices + '/verificaCodigo',
+        variosPagos: invoices + '/variosPagos',
     },
 };
 
