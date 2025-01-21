@@ -146,6 +146,7 @@ const invoicesDir = {
         codigoDescuento: invoices + '/codigoDescuento',
         verificaCodigo: invoices + '/verificaCodigo',
         variosPagos: invoices + '/variosPagos',
+        resetTokenAfip: invoices + '/resetTokenAfip',
     },
 };
 
