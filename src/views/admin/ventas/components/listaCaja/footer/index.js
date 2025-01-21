@@ -7,6 +7,12 @@ const FooterListVentas = ({ listaCaja }) => {
     const [totalFinalPlant, setTotalFinalPlant] = useState(<></>);
     const [totalCtaCtePlant, setTotalCtaCtePlant] = useState(<></>);
 
+    const defaultValues = () => {
+        setTotalesPlant(<></>);
+        setTotalFinalPlant(<></>);
+        setTotalCtaCtePlant(<></>);
+    };
+
     useEffect(() => {
         try {
             let efectivoRow = <></>;
@@ -143,13 +149,11 @@ const FooterListVentas = ({ listaCaja }) => {
                     );
                 }
             } else {
-                setTotalFinalPlant(<TotalItemsVtas totalId={8} totalImporte={0} colSize={6} />);
-                setTotalCtaCtePlant(<TotalItemsVtas totalId={4} totalImporte={0} colSize={6} />);
+                defaultValues();
             }
         } catch (error) {
             console.log('error :>> ', error);
-            setTotalFinalPlant(<TotalItemsVtas totalId={8} totalImporte={0} colSize={6} />);
-            setTotalCtaCtePlant(<TotalItemsVtas totalId={4} totalImporte={0} colSize={6} />);
+            defaultValues();
         }
     }, [listaCaja]);
 
