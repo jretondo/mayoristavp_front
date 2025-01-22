@@ -182,8 +182,9 @@ const Ventas = ({ setValidPV }) => {
                 closeModal: false,
             },
         })
-            .then(async (pedido) => {
-                if (pedido) {
+            .then(async () => {
+                const pedido = parseInt(input.value);
+                if (pedido && pedido !== '' && !isNaN(pedido)) {
                     let data;
                     if (parseInt(clienteBool) === 0) {
                         data = {
