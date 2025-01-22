@@ -14,9 +14,9 @@ const ProductFinder = () => {
     const [cantProd, setCantProd] = useState(1);
     const [camera, setCamera] = useState(false);
     const [prodSearchModal, setProdSearchModal] = useState(false);
-    const [orderId, setOrderId] = useState('');
 
-    const { NewProdSell, productsSellList, error, getProductsFromOrderId } = useContext(productsSellContext);
+    const { NewProdSell, productsSellList, error, getProductsFromOrderId, orderId, setOrderId } =
+        useContext(productsSellContext);
 
     const [play] = useSound(beepSfx);
 
@@ -55,6 +55,7 @@ const ProductFinder = () => {
 
     useEffect(() => {
         document.getElementById('prodTxtFinder').select();
+        productsSellList.length === 0 && setOrderId('');
     }, [productsSellList]);
 
     useEffect(() => {

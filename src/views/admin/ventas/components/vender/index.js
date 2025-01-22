@@ -32,7 +32,7 @@ const Ventas = ({ setValidPV }) => {
     const [cliente, setCliente] = useState(false);
     const [userId, setUserId] = useState(localStorage.getItem('userId'));
 
-    const { totalPrecio, cancelarCompra, productsSellList } = useContext(productsSellContext);
+    const { totalPrecio, cancelarCompra, productsSellList, orderId } = useContext(productsSellContext);
 
     const cancelar = () => {
         swal({
@@ -166,6 +166,125 @@ const Ventas = ({ setValidPV }) => {
             })
             .finally(() => {
                 setProcessing(false);
+            });
+    };
+
+    const ordenarPedido = async () => {
+        let input = document.createElement('input');
+        input.value = orderId;
+        input.type = 'number';
+        input.className = 'swal-content__input';
+        swal({
+            text: 'Ingrese el número de pedido',
+            content: input,
+            button: {
+                text: 'Ingresar',
+                closeModal: false,
+            },
+        })
+            .then(async (pedido) => {
+                if (pedido) {
+                    let data;
+                    if (parseInt(clienteBool) === 0) {
+                        data = {
+                            dataFact: {
+                                fecha: moment(new Date()).format('YYYY-MM-DD'),
+                                pv_id: ptoVta.id,
+                                fiscal: factFiscBool,
+                                forma_pago: 5,
+                                enviar_email: envioEmailBool,
+                                cliente_email: emailCliente,
+                                lista_prod: productsSellList,
+                                descuentoPerc: descuentoPerc,
+                                variosPagos: variosPagos,
+                                t_fact: parseInt(tfact),
+                            },
+                            fiscal: factFiscBool,
+                            user_id: userId,
+                            orderId: pedido,
+                        };
+                    } else {
+                        data = {
+                            dataFact: {
+                                fecha: moment(new Date()).format('YYYY-MM-DD'),
+                                pv_id: ptoVta.id,
+                                fiscal: factFiscBool,
+                                forma_pago: 5,
+                                enviar_email: envioEmailBool,
+                                cliente_email: emailCliente,
+                                cliente_bool: parseInt(clienteBool),
+                                lista_prod: productsSellList,
+                                descuentoPerc: descuentoPerc,
+                                variosPagos: variosPagos,
+                                t_fact: parseInt(tfact),
+                                cliente_id: cliente.id,
+                            },
+                            fiscal: factFiscBool,
+                            user_id: userId,
+                            orderId: pedido,
+                        };
+                    }
+                    setProcessing(true);
+                    await axios
+                        .post(UrlNodeServer.invoicesDir.sub.order, data, {
+                            responseType: 'arraybuffer',
+                            headers: {
+                                Authorization: 'Bearer ' + localStorage.getItem('user-token'),
+                                Accept: 'application/pdf',
+                            },
+                        })
+                        .then((res) => {
+                            let headerLine = res.headers['content-disposition'];
+                            const largo = parseInt(headerLine.length);
+                            let filename = headerLine.substring(21, largo);
+                            var blob = new Blob([res.data], { type: 'application/pdf' });
+                            FileSaver.saveAs(blob, filename);
+                            cancelarCompra();
+                            setDescuentoPer(0);
+                            setFactFiscBool(0);
+                            setClienteBool(0);
+                            setEnvioEmailBool(0);
+                            setVariosPagos([]);
+                            setEmailCliente('');
+                            setCliente(false);
+                            setUserId(localStorage.getItem('userId'));
+                            if (envioEmailBool) {
+                                swal(
+                                    'Nueva Factura!',
+                                    'La factura se ha generado con éxito y pronto le llegará al cliente por email!',
+                                    'success',
+                                );
+                            } else {
+                                swal('Nueva Factura!', 'La factura se ha generado con éxito!', 'success');
+                            }
+                        })
+                        .catch(async (err) => {
+                            console.log('object :>> ', err);
+                            if (err.code === 'ECONNABORTED') {
+                                await swal(
+                                    'Tiempo de espera superado!',
+                                    'Ha tardado demasiado el servidor en responder. En breve se generará la factura y la podrá ver reflejada consultando en el sistema.',
+                                    'error',
+                                );
+                                await swal('Le mandaremos un email en cuanto se genere la factura.', '', 'info');
+                            } else {
+                                swal(
+                                    'Error inesperado!',
+                                    'La factura no se pudo generar por un error en los datos! Controle que no falten datos importantes en la cabecera',
+                                    'error',
+                                );
+                            }
+                        })
+                        .finally(() => {
+                            setProcessing(false);
+                        });
+                    swal('Pedido realizado!', 'El pedido se ha realizado con éxito!', 'success');
+                } else {
+                    swal('Error!', 'Hubo un error. Controle que haya colocado un número válido!', 'error');
+                }
+            })
+            .catch(() => {
+                swal('Error!', 'Hubo un error. Controle que haya colocado un número válido!', 'error');
             });
     };
 
@@ -381,6 +500,17 @@ const Ventas = ({ setValidPV }) => {
                                     }}
                                 >
                                     Cancelar
+                                </button>
+                                <button
+                                    className={totalPrecio === 0 ? 'btn btn-gray' : 'btn btn-success'}
+                                    style={{ margin: '15px', width: '200px' }}
+                                    disabled={totalPrecio === 0 ? true : false}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        ordenarPedido();
+                                    }}
+                                >
+                                    Ordenar Pedido
                                 </button>
                             </Col>
                         </Row>

@@ -147,6 +147,7 @@ const invoicesDir = {
         verificaCodigo: invoices + '/verificaCodigo',
         variosPagos: invoices + '/variosPagos',
         resetTokenAfip: invoices + '/resetTokenAfip',
+        order: invoices + '/orderPDF',
     },
 };
 

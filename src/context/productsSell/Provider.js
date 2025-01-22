@@ -9,6 +9,7 @@ const ProdSellProvider = ({ children }) => {
     const [productsSellList, setProductsSellList] = useState([]);
     const [totalPrecio, setTotalPrecio] = useState(0);
     const [error, setError] = useState();
+    const [orderId, setOrderId] = useState('');
 
     const NewProdSell = async (text, cant) => {
         setError();
@@ -219,6 +220,8 @@ const ProdSellProvider = ({ children }) => {
                 setTotalPrecio,
                 cambiarCantidad,
                 getProductsFromOrderId,
+                orderId,
+                setOrderId,
             }}
         >
             {children}
