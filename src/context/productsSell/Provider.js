@@ -1,6 +1,6 @@
 import UrlNodeServer from 'api/NodeServer';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ProdSellContext from './index';
 import React from 'react';
 import moment from 'moment';
@@ -10,6 +10,7 @@ const ProdSellProvider = ({ children }) => {
     const [totalPrecio, setTotalPrecio] = useState(0);
     const [error, setError] = useState();
     const [orderId, setOrderId] = useState('');
+    const [sinStock, setSinStock] = useState(0);
 
     const NewProdSell = async (text, cant) => {
         setError();
@@ -137,7 +138,6 @@ const ProdSellProvider = ({ children }) => {
                 if (status === 200) {
                     const data = respuesta.body.data;
                     const items = data.items;
-                    console.log('items :>> ', items);
                     if (items && items.length > 0) {
                         items.forEach((item) => {
                             const data = {
@@ -207,6 +207,16 @@ const ProdSellProvider = ({ children }) => {
         setError();
     };
 
+    useEffect(() => {
+        let totalSinStock = 0;
+        productsSellList.forEach((item) => {
+            if (parseInt(item.stock) < parseInt(item.cant_prod)) {
+                totalSinStock++;
+            }
+        });
+        setSinStock(totalSinStock);
+    }, [productsSellList]);
+
     return (
         <ProdSellContext.Provider
             value={{
@@ -222,6 +232,7 @@ const ProdSellProvider = ({ children }) => {
                 getProductsFromOrderId,
                 orderId,
                 setOrderId,
+                sinStock,
             }}
         >
             {children}

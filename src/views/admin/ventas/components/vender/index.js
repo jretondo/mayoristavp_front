@@ -32,7 +32,7 @@ const Ventas = ({ setValidPV }) => {
     const [cliente, setCliente] = useState(false);
     const [userId, setUserId] = useState(localStorage.getItem('userId'));
 
-    const { totalPrecio, cancelarCompra, productsSellList, orderId } = useContext(productsSellContext);
+    const { totalPrecio, cancelarCompra, productsSellList, orderId, sinStock } = useContext(productsSellContext);
 
     const cancelar = () => {
         swal({
@@ -479,6 +479,7 @@ const Ventas = ({ setValidPV }) => {
                                     }
                                     style={{ margin: '15px', width: '200px' }}
                                     disabled={
+                                        sinStock ||
                                         totalPrecio === 0 ||
                                         Math.round(total * 100) / 100 !==
                                             Math.round((totalPrecio - totalPrecio * (descuentoPerc / 100)) * 100) / 100

@@ -3,7 +3,7 @@ import axios from 'axios';
 import CompleteCerosLeft from 'Function/CompleteCeroLeft';
 import moment from 'moment';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Col, FormGroup, Input, Label, Row } from 'reactstrap';
+import { Button, Col, FormGroup, Input, Label, Modal, Row } from 'reactstrap';
 import PtosVtas from './ptosVta';
 import Form from 'reactstrap/lib/Form';
 import ProvedorModal from './providerModal/index';
@@ -22,12 +22,17 @@ const InvoiceHeader = ({
     setProvedor,
     userId,
     setUserId,
+    categoriaPago,
+    setCategoriaPago,
 }) => {
     const [ptoVtaList, setPtoVtaList] = useState(<option>No hay puntos de venta relacionados</option>);
     const [cbteStr, setCbteStr] = useState('');
     const [nroCbte, setNroCbte] = useState(0);
     const [ProvedorModalIsOpen, setProvedorModalIsOpen] = useState(false);
     const [users, setUsers] = useState([]);
+    const [categoriasPago, setCategoriasPago] = useState([]);
+    const [newCatModal, setNewCatModal] = useState(false);
+    const [newCat, setNewCat] = useState('');
 
     const isAdmin = localStorage.getItem('isAdmin');
 
@@ -47,6 +52,20 @@ const InvoiceHeader = ({
             const data = response.data.body.data;
             setUsers(data);
         } catch (error) {}
+    });
+
+    const getCategorias = useCallback(async () => {
+        try {
+            const response = await axios.get(UrlNodeServer.invoicesDir.sub.categoriasPago, {
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('user-token'),
+                },
+            });
+            const data = response.data.body;
+            setCategoriasPago(data);
+        } catch (error) {
+            setCategoriasPago([]);
+        }
     });
 
     const lastInvoice = useCallback(async () => {
@@ -82,6 +101,7 @@ const InvoiceHeader = ({
 
     useEffect(() => {
         isAdmin && getUsers();
+        getCategorias();
     }, []);
 
     return (
@@ -92,6 +112,51 @@ const InvoiceHeader = ({
                 isOpen={ProvedorModalIsOpen}
                 toggle={() => setProvedorModalIsOpen(!ProvedorModalIsOpen)}
             />
+            <Modal isOpen={newCatModal} toggle={() => setNewCatModal(!newCatModal)}>
+                <div className="modal-header">
+                    <h5 className="modal-title" id="exampleModalLabel">
+                        Nueva Categoria de Pago
+                    </h5>
+                    <button
+                        aria-label="Close"
+                        className="close"
+                        type="button"
+                        onClick={() => setNewCatModal(!newCatModal)}
+                    >
+                        <span aria-hidden={true}>×</span>
+                    </button>
+                </div>
+                <div className="modal-body">
+                    <FormGroup>
+                        <Label for="newCatTxt">Categoria</Label>
+                        <Input type="text" id="newCatTxt" value={newCat} onChange={(e) => setNewCat(e.target.value)} />
+                    </FormGroup>
+                </div>
+                <div className="modal-footer">
+                    <Button
+                        color="primary"
+                        onClick={() => {
+                            setNewCatModal(!newCatModal);
+                            axios
+                                .post(
+                                    UrlNodeServer.invoicesDir.sub.categoriasPago,
+                                    { categoria: newCat },
+                                    {
+                                        headers: {
+                                            Authorization: 'Bearer ' + localStorage.getItem('user-token'),
+                                        },
+                                    },
+                                )
+                                .then(() => getCategorias());
+                        }}
+                    >
+                        Guardar
+                    </Button>
+                    <Button color="secondary" onClick={() => setNewCatModal(!newCatModal)}>
+                        Cancelar
+                    </Button>
+                </div>
+            </Modal>
             <Form>
                 <Row>
                     <Col style={{ border: '2px solid red', padding: '15px', margin: 0 }}>
@@ -176,6 +241,31 @@ const InvoiceHeader = ({
                             )}
                         </Row>
                         <Row>
+                            <Col md="3">
+                                <FormGroup>
+                                    <Label>Categoria</Label>
+                                    <Button
+                                        className="p-0 px-1 ml-2"
+                                        color="primary"
+                                        onClick={() => setNewCatModal(true)}
+                                        index="50"
+                                    >
+                                        <i className="fas fa-plus"></i>
+                                    </Button>
+                                    <Input
+                                        type="select"
+                                        value={categoriaPago}
+                                        onChange={(e) => setCategoriaPago(e.target.value)}
+                                    >
+                                        <option value={0}>-</option>
+                                        {categoriasPago.map((cat) => (
+                                            <option key={cat.id} value={cat.categoria}>
+                                                {cat.categoria}
+                                            </option>
+                                        ))}
+                                    </Input>
+                                </FormGroup>
+                            </Col>
                             {isAdmin && (
                                 <Col md="3">
                                     <FormGroup>

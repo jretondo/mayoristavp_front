@@ -15,8 +15,7 @@ if (process.env.NODE_ENV === 'development') {
     host = 'https://api-prod.nekoadmin.com.ar/mayoristavp/api';
     publicFiles = 'https://api-prod.nekoadmin.com.ar/mayoristavp/static';
 }
-host = 'https://api-prod.nekoadmin.com.ar/mayoristavp/api';
-publicFiles = 'https://api-prod.nekoadmin.com.ar/mayoristavp/static';
+
 const prodImages = publicFiles + '/images/products/';
 const heroImages = publicFiles + '/images/heroSlider/';
 
@@ -149,6 +148,7 @@ const invoicesDir = {
         variosPagos: invoices + '/variosPagos',
         resetTokenAfip: invoices + '/resetTokenAfip',
         order: invoices + '/orderPDF',
+        categoriasPago: invoices + '/categoriasPago',
     },
 };
 

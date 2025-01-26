@@ -26,6 +26,8 @@ const PagosModule = ({ setValidPV }) => {
     const [provedor, setProvedor] = useState(false);
     const [userId, setUserId] = useState(localStorage.getItem('userId'));
 
+    const [categoriaPago, setCategoriaPago] = useState(false);
+
     const generarOP = async () => {
         const data = {
             detalle,
@@ -33,6 +35,7 @@ const PagosModule = ({ setValidPV }) => {
             provedorID: parseInt(proveedorBool) === 0 ? undefined : provedor.id,
             pvId: ptoVta.id,
             pagos: variosPagos,
+            cat_pago: categoriaPago,
         };
 
         if (Math.round(total * 100) / 100 <= 0) {
@@ -127,6 +130,8 @@ const PagosModule = ({ setValidPV }) => {
                             setProvedor={setProvedor}
                             userId={userId}
                             setUserId={setUserId}
+                            categoriaPago={categoriaPago}
+                            setCategoriaPago={setCategoriaPago}
                         />
                         <br />
                         <Row>
@@ -174,7 +179,7 @@ const PagosModule = ({ setValidPV }) => {
                                         generarOP();
                                     }}
                                 >
-                                    Confirmar Compra
+                                    Confirmar Pago
                                 </button>
                                 <button
                                     className="btn btn-danger"
