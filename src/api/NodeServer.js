@@ -110,6 +110,7 @@ const clientesDir = {
         details: clientes + '/details',
         dataFiscal: clientes + '/dataFiscal',
         ctaCte: clientes + '/ctaCte',
+        ctaCteAll: clientes + '/ctaCte/all',
         payments: clientes + '/payments',
     },
 };

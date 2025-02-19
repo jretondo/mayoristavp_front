@@ -26,7 +26,7 @@ const FilaProdSell = ({ id, item }) => {
     };
 
     return (
-        <tr key={id} style={item.stock <= 0 ? { backgroundColor: 'red', color: 'white' } : {}}>
+        <tr key={id} style={item.stock - item.cant_prod <= 0 ? { backgroundColor: 'red', color: 'white' } : {}}>
             <td style={{ textAlign: 'center' }}>{item.name}</td>
             <td style={{ textAlign: 'center' }} onDoubleClick={() => actChangeQuantity()}>
                 {updateQuantity ? (

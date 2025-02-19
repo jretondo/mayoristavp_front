@@ -228,13 +228,19 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
                     </Tooltip>
                 </td>
                 <td>
-                    {item.pagos.map((item, key) => {
-                        return (
-                            <div key={key} style={{ textAlign: 'center' }}>
-                                {pagoString(item.tipo)}: $ {formatMoney(item.importe)}
-                            </div>
-                        );
-                    })}
+                    {parseInt(item.forma_pago) === 5 ? (
+                        item.pagos.map((item, key) => {
+                            return (
+                                <div key={key} style={{ textAlign: 'center' }}>
+                                    {pagoString(item.tipo)}: $ {formatMoney(item.importe)}
+                                </div>
+                            );
+                        })
+                    ) : (
+                        <div style={{ textAlign: 'center' }}>
+                            {pagoString(item.forma_pago)}: $ {formatMoney(item.total_fact)}
+                        </div>
+                    )}
                 </td>
                 <td style={{ textAlign: 'center' }}>$ {formatMoney(item.total_fact)}</td>
                 <td className="text-right">

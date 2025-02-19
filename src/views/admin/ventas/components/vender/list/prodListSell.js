@@ -22,11 +22,10 @@ const ProdListSell = () => {
             let total = 0;
             setListProdVenta(
                 lista.map((item, key) => {
-                    total = roundNumber(
-                        total + item.vta_price * (1 - item.descuento_porcentaje / 100) * item.cant_prod,
-                    );
+                    total =
+                        total + roundNumber(item.vta_price * (1 - item.descuento_porcentaje / 100) * item.cant_prod);
                     if (key === lista.length - 1) {
-                        setTotalPrecio(roundNumber(total));
+                        setTotalPrecio(total);
                     }
                     return <FilaProdSell key={key} id={key} item={item} />;
                 }),

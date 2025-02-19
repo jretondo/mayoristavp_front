@@ -175,7 +175,7 @@ const InfoForm = ({
                     </Col>
                 </Row>
                 <Row>
-                    <Col lg="4">
+                    <Col lg="3">
                         <FormGroup>
                             <label className="form-control-label" htmlFor="unidadesTxt">
                                 Venta por:
@@ -193,10 +193,10 @@ const InfoForm = ({
                             </Input>
                         </FormGroup>
                     </Col>
-                    <Col lg="4">
+                    <Col lg="3">
                         <FormGroup>
                             <label className="form-control-label" htmlFor="input-username">
-                                Costo Sin IVA
+                                Costo
                             </label>
                             <Input
                                 className="form-control-alternative"
@@ -210,7 +210,7 @@ const InfoForm = ({
                             />
                         </FormGroup>
                     </Col>
-                    <Col md="4">
+                    <Col md="3">
                         <FormGroup>
                             <label className="form-control-label" htmlFor="precioVtaTxt">
                                 Precio de venta
@@ -226,42 +226,7 @@ const InfoForm = ({
                             />
                         </FormGroup>
                     </Col>
-                </Row>
-                <Row>
-                    <Col md="4">
-                        <FormGroup>
-                            <label className="form-control-label" htmlFor="unidadesTxt">
-                                IVA:
-                            </label>
-                            <Input
-                                style={{ fontSize: '20px' }}
-                                type="select"
-                                id="unidadesTxt"
-                                onChange={(e) => setIvaCosto(e.target.value)}
-                                value={ivaCosto}
-                            >
-                                <option value={21}>21%</option>
-                                <option value={10.5}>10,5%</option>
-                                <option value={27}>27%</option>
-                                <option value={0}>0%</option>
-                            </Input>
-                        </FormGroup>
-                    </Col>
-                    <Col md="4">
-                        <FormGroup>
-                            <label className="form-control-label" htmlFor="precioVtaTxt">
-                                Costo con IVA
-                            </label>
-                            <Input
-                                style={{ fontSize: '25px' }}
-                                type="text"
-                                id="precioVtaTxt"
-                                value={costoIva}
-                                disabled
-                            />
-                        </FormGroup>
-                    </Col>
-                    <Col lg="4">
+                    <Col lg="3">
                         <FormGroup>
                             <label className="form-control-label" htmlFor="input-username">
                                 Porc. Ganancia (%)
@@ -351,7 +316,7 @@ const InfoForm = ({
                     </Col>
                 </Row>
                 <Row>
-                    <Col lg="3">
+                    <Col lg="2">
                         <FormGroup>
                             <label className="form-control-label" htmlFor="unidadesTxt">
                                 Venta por:
@@ -372,7 +337,7 @@ const InfoForm = ({
                     <Col lg="3">
                         <FormGroup>
                             <label className="form-control-label" htmlFor="input-username">
-                                Costo Sin IVA
+                                Costo
                             </label>
                             <Input
                                 className="form-control-alternative"
@@ -386,7 +351,7 @@ const InfoForm = ({
                             />
                         </FormGroup>
                     </Col>
-                    <Col lg="3">
+                    <Col lg="2">
                         <FormGroup>
                             <label className="form-control-label" htmlFor="input-username">
                                 Porc. Ganancia (%)
@@ -406,7 +371,7 @@ const InfoForm = ({
                             />
                         </FormGroup>
                     </Col>
-                    <Col lg="3">
+                    <Col lg="2">
                         <FormGroup>
                             <FormGroup check>
                                 <Label check>
@@ -434,42 +399,7 @@ const InfoForm = ({
                             </FormGroup>
                         </FormGroup>
                     </Col>
-                </Row>
-                <Row>
-                    <Col md="4">
-                        <FormGroup>
-                            <label className="form-control-label" htmlFor="unidadesTxt">
-                                IVA:
-                            </label>
-                            <Input
-                                style={{ fontSize: '20px' }}
-                                type="select"
-                                id="unidadesTxt"
-                                onChange={(e) => setIvaCosto(e.target.value)}
-                                value={ivaCosto}
-                            >
-                                <option value={21}>21%</option>
-                                <option value={10.5}>10,5%</option>
-                                <option value={27}>27%</option>
-                                <option value={0}>0%</option>
-                            </Input>
-                        </FormGroup>
-                    </Col>
-                    <Col md="4">
-                        <FormGroup>
-                            <label className="form-control-label" htmlFor="precioVtaTxt">
-                                Costo con IVA
-                            </label>
-                            <Input
-                                style={{ fontSize: '25px' }}
-                                type="text"
-                                id="precioVtaTxt"
-                                value={costoIva}
-                                disabled
-                            />
-                        </FormGroup>
-                    </Col>
-                    <Col md="4">
+                    <Col md="3">
                         <FormGroup>
                             <label className="form-control-label" htmlFor="precioVtaTxt">
                                 Precio de venta

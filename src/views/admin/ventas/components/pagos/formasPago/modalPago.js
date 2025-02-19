@@ -158,7 +158,11 @@ const ModalPago = ({ modal, toggle, setVariosPagos, variosPagos }) => {
                                             }}
                                         >
                                             <option value={0}>Efectivo</option>
+                                            <option value={1}>Mercado Pago</option>
+                                            <option value={2}>Débito</option>
+                                            <option value={3}>Crédito</option>
                                             <option value={6}>Cheque</option>
+                                            <option value={7}>Transferencia</option>
                                         </Input>
                                     </Col>
                                     {parseInt(pago.tipo) === 0 ? (
@@ -171,7 +175,7 @@ const ModalPago = ({ modal, toggle, setVariosPagos, variosPagos }) => {
                                 </Row>
                             </FormGroup>
                         </Col>
-                        {parseInt(pago.tipo) === 0 ? (
+                        {parseInt(pago.tipo) !== 6 ? (
                             <Col md={6}>
                                 <FormGroup>
                                     <Label for="impPagosTxt">Importe</Label>

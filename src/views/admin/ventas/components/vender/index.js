@@ -316,7 +316,7 @@ const Ventas = ({ setValidPV }) => {
             setCliente(false);
         }
     }, [clienteBool]);
-
+    console.log('sinStock :>> ', sinStock);
     return (
         <Card>
             <ModalChange descuentoPerc={descuentoPerc} modal={modal1} toggle={() => setModal1(!modal1)} />
