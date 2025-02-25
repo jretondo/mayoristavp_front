@@ -10,10 +10,9 @@ import UrlNodeServer from '../../../../../../api/NodeServer';
 import swal from 'sweetalert';
 import FileSaver from 'file-saver';
 
-const HeaderListaCaja = ({ setListaCaja, pagina, setLoading, actualizar }) => {
+const HeaderListaCaja = ({ setListaCaja, pagina, setLoading, actualizar, ptosVta, setPtoVta, moduleActive }) => {
     const hoy1 = moment(new Date()).format('YYYY-MM-DD');
     const hoy2 = moment(new Date()).format('YYYY-MM-DD');
-    const [ptosVta, setPtoVta] = useState({ id: 0 });
     const [ptoVtaList, setPtoVtaList] = useState(<option>No hay puntos de venta relacionados</option>);
     const [user, setUser] = useState({ id: 0 });
     const [usersList, setUsersList] = useState(<option>No hay usuarios listados</option>);
@@ -110,9 +109,9 @@ const HeaderListaCaja = ({ setListaCaja, pagina, setLoading, actualizar }) => {
     };
 
     useEffect(() => {
-        getDataInvoices();
+        moduleActive === 2 && getDataInvoices();
         // eslint-disable-next-line
-    }, [pagina, actualizar]);
+    }, [pagina, actualizar, moduleActive]);
 
     return (
         <Form

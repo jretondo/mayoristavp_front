@@ -75,6 +75,7 @@ const ptosVtaDir = {
         details: ptosVta + '/details',
         userPv: ptosVta + '/userPv',
         list: ptosVta + '/list',
+        saldosEfvo: ptosVta + '/saldosEfvo',
     },
 };
 

@@ -23,7 +23,7 @@ import Spinner from 'reactstrap/lib/Spinner';
 import FileSaver from 'file-saver';
 import AdvancedSearch from '../advancedSearch';
 
-const titulos = ['Producto', 'Proveedor', 'Marca', 'Familia', 'Costo', '% Gan.', ''];
+const titulos = ['Producto', 'Proveedor', 'Marca', 'Familia', 'Costo', 'Estado', '% Gan.', ''];
 
 const ProdList = ({
     detallesBool,

@@ -149,7 +149,7 @@ const VentasModule = () => {
                         </Collapse>
 
                         <Collapse isOpen={moduleActive === 2 ? true : false}>
-                            <ListaCajaModule />
+                            <ListaCajaModule moduleActive={moduleActive} />
                         </Collapse>
 
                         <Collapse isOpen={moduleActive === 1 ? true : false}>

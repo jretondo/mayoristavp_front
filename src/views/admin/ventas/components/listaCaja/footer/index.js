@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Row } from 'reactstrap';
 import TotalItemsVtas from './totalItem';
+import TotalEfvo from './totalEfvo';
 
-const FooterListVentas = ({ listaCaja }) => {
+const FooterListVentas = ({ listaCaja, ptosVta, setPtoVta }) => {
     const [totalesPlant, setTotalesPlant] = useState(<></>);
     const [totalFinalPlant, setTotalFinalPlant] = useState(<></>);
     const [totalCtaCtePlant, setTotalCtaCtePlant] = useState(<></>);
@@ -165,6 +166,7 @@ const FooterListVentas = ({ listaCaja }) => {
                 {totalFinalPlant}
                 {totalCtaCtePlant}
             </Row>
+            <TotalEfvo ptosVta={ptosVta} setPtoVta={setPtoVta} listaCaja={listaCaja} />
         </>
     );
 };
