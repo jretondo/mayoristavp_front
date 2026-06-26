@@ -1,7 +1,7 @@
-import UrlNodeServer from '../../../../api/NodeServer'
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
-import { Card, CardBody, CardHeader, Col, Form, FormGroup, Input, Label, Row, Spinner } from 'reactstrap'
+import UrlNodeServer from '../../../../api/NodeServer';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { Card, CardBody, CardHeader, Col, Form, FormGroup, Input, Label, Row, Spinner } from 'reactstrap';
 
 const UserForm = ({
     alertar,
@@ -14,190 +14,202 @@ const UserForm = ({
     setActividadStr,
     setNvaOffer,
     idDetalle,
-    detBool
+    detBool,
 }) => {
-    const [nombre, setnombre] = useState("")
-    const [apellido, setApellido] = useState("")
-    const [usuario, setUsuario] = useState("")
-    const [email, setEmail] = useState("")
-    const [loading, setloading] = useState(false)
-    const [ptoVtaSelect, setPtoVtaSelect] = useState(0)
-    const [plantPtosVta, setPlantPtosVta] = useState(<></>)
+    const [nombre, setnombre] = useState('');
+    const [apellido, setApellido] = useState('');
+    const [usuario, setUsuario] = useState('');
+    const [email, setEmail] = useState('');
+    const [telefono, setTelefono] = useState('');
+    const [loading, setloading] = useState(false);
+    const [ptoVtaSelect, setPtoVtaSelect] = useState(0);
+    const [plantPtosVta, setPlantPtosVta] = useState(<></>);
 
     useEffect(() => {
-        ListaPV()
+        ListaPV();
         // eslint-disable-next-line
-    }, [])
+    }, []);
 
     useEffect(() => {
         if (detBool) {
-            DetalleUsuarios()
+            DetalleUsuarios();
         }
         // eslint-disable-next-line
-    }, [detBool])
+    }, [detBool]);
 
     const NvoUsuario = async () => {
-        setloading(true)
+        setloading(true);
         const data = {
             nombre,
             apellido,
             email,
             usuario,
-            pv: ptoVtaSelect === "null" ? null : ptoVtaSelect
-        }
+            pv: ptoVtaSelect === 'null' ? null : ptoVtaSelect,
+            telefono: telefono || '',
+        };
 
         if (detBool) {
-            data.id = idDetalle
+            data.id = idDetalle;
         }
 
-        await axios.post(UrlNodeServer.usuariosDir.usuarios, data, {
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-            }
-        })
-            .then(res => {
-                const respuesta = res.data
-                const status = parseInt(respuesta.status)
+        await axios
+            .post(UrlNodeServer.usuariosDir.usuarios, data, {
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('user-token'),
+                },
+            })
+            .then((res) => {
+                const respuesta = res.data;
+                const status = parseInt(respuesta.status);
                 if (status === 200) {
-                    ResetForm()
+                    ResetForm();
                     if (detBool) {
-                        setActividadStr("El usuario a modificado al ususario " + usuario)
-                        setMsgStrong("Usuario modificado con éxito!")
-                        setNvaOffer(false)
+                        setActividadStr('El usuario a modificado al ususario ' + usuario);
+                        setMsgStrong('Usuario modificado con éxito!');
+                        setNvaOffer(false);
                     } else {
-                        setActividadStr("El usuario a agregado al ususario " + usuario)
-                        setMsgStrong("Usuario agregado con éxito!")
+                        setActividadStr('El usuario a agregado al ususario ' + usuario);
+                        setMsgStrong('Usuario agregado con éxito!');
                     }
 
-                    setMsgGralAlert("")
-                    setNvaActCall(!nvaActCall)
-                    setSuccessAlert(true)
-                    setAlertar(!alertar)
-                    setloading(false)
+                    setMsgGralAlert('');
+                    setNvaActCall(!nvaActCall);
+                    setSuccessAlert(true);
+                    setAlertar(!alertar);
+                    setloading(false);
                 } else {
-                    setMsgStrong("Hubo un error!")
-                    setMsgGralAlert(" Intente nuevamente.")
-                    setSuccessAlert(false)
-                    setAlertar(!alertar)
+                    setMsgStrong('Hubo un error!');
+                    setMsgGralAlert(' Intente nuevamente.');
+                    setSuccessAlert(false);
+                    setAlertar(!alertar);
                 }
             })
             .catch(() => {
-                setloading(false)
-                setMsgStrong("Hubo un error!")
-                setMsgGralAlert(" Intente nuevamente.")
-                setSuccessAlert(false)
-                setAlertar(!alertar)
-            })
-    }
+                setloading(false);
+                setMsgStrong('Hubo un error!');
+                setMsgGralAlert(' Intente nuevamente.');
+                setSuccessAlert(false);
+                setAlertar(!alertar);
+            });
+    };
 
     const DetalleUsuarios = async () => {
-        setloading(true)
-        await axios.get(`${UrlNodeServer.usuariosDir.sub.details}/${idDetalle}`, {
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-            }
-        })
-            .then(res => {
-                setloading(false)
-                const respuesta = res.data
-                const status = parseInt(respuesta.status)
+        setloading(true);
+        await axios
+            .get(`${UrlNodeServer.usuariosDir.sub.details}/${idDetalle}`, {
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('user-token'),
+                },
+            })
+            .then((res) => {
+                setloading(false);
+                const respuesta = res.data;
+                const status = parseInt(respuesta.status);
                 if (status === 200) {
-                    const userData = respuesta.body[0]
-                    setnombre(userData.nombre)
-                    setApellido(userData.apellido)
-                    setUsuario(userData.usuario)
-                    setEmail(userData.email)
-                    setPtoVtaSelect(userData.pv === null ? "null" : userData.pv)
-                    document.getElementById("nameTxt").focus()
+                    const userData = respuesta.body[0];
+                    setnombre(userData.nombre);
+                    setApellido(userData.apellido);
+                    setUsuario(userData.usuario);
+                    setEmail(userData.email);
+                    setPtoVtaSelect(userData.pv === null ? 'null' : userData.pv);
+                    setTelefono(userData.telefono || '');
+                    document.getElementById('nameTxt').focus();
                 } else {
-                    setloading(false)
-                    setMsgStrong("Hubo un error!")
-                    setMsgGralAlert(" Intente nuevamente.")
-                    setSuccessAlert(false)
-                    setAlertar(!alertar)
+                    setloading(false);
+                    setMsgStrong('Hubo un error!');
+                    setMsgGralAlert(' Intente nuevamente.');
+                    setSuccessAlert(false);
+                    setAlertar(!alertar);
                 }
             })
             .catch(() => {
-                setloading(false)
-                setMsgStrong("Hubo un error!")
-                setMsgGralAlert(" Intente nuevamente.")
-                setSuccessAlert(false)
-                setAlertar(!alertar)
-            })
-    }
+                setloading(false);
+                setMsgStrong('Hubo un error!');
+                setMsgGralAlert(' Intente nuevamente.');
+                setSuccessAlert(false);
+                setAlertar(!alertar);
+            });
+    };
 
     const ListaPV = async () => {
-        setloading(true)
-        await axios.get(`${UrlNodeServer.ptosVtaDir.ptosVta}`, {
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-            },
-        })
-            .then(res => {
-                setloading(false)
-                const respuesta = res.data
-                const status = parseInt(respuesta.status)
+        setloading(true);
+        await axios
+            .get(`${UrlNodeServer.ptosVtaDir.ptosVta}`, {
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('user-token'),
+                },
+            })
+            .then((res) => {
+                setloading(false);
+                const respuesta = res.data;
+                const status = parseInt(respuesta.status);
                 if (status === 200) {
-                    const resultado = respuesta.body.data
+                    const resultado = respuesta.body.data;
 
                     setPlantPtosVta(
                         resultado.map((item, key) => {
-                           
                             return (
-                                <option key={key +2} value={item.pv}>{item.direccion + " (PV: " + item.pv + ")"}</option>
-                            )
-                        })
-                    )
+                                <option key={key + 2} value={item.pv}>
+                                    {item.direccion + ' (PV: ' + item.pv + ')'}
+                                </option>
+                            );
+                        }),
+                    );
                 } else {
-                    setPlantPtosVta(<></>)
+                    setPlantPtosVta(<></>);
                 }
             })
             .catch(() => {
-                setloading(false)
-            })
-    }
+                setloading(false);
+            });
+    };
 
     const NombreUsu = () => {
-        const letraNombre = nombre.substring(0, 1)
-        const usarionombre = (letraNombre + apellido).toLowerCase()
-        setUsuario(usarionombre)
-    }
+        const letraNombre = nombre.substring(0, 1);
+        const usarionombre = (letraNombre + apellido).toLowerCase();
+        setUsuario(usarionombre);
+    };
 
     const ResetForm = () => {
-        setnombre("")
-        setApellido("")
-        setUsuario("")
-        setEmail("")
-    }
+        setnombre('');
+        setApellido('');
+        setUsuario('');
+        setEmail('');
+    };
 
-    return (<>
-        <Card>
-            <CardHeader>
-                <Row>
-                    <Col md="10">
-                        <h2>{detBool ? `Modificar usuario ${nombre} ${apellido}` : "Usuario Nuevo"}</h2>
-                    </Col>
-                    <Col md="2" style={{ textAlign: "right" }}>
-                        <button
-                            className="btn btn-danger"
-                            onClick={e => {
+    return (
+        <>
+            <Card>
+                <CardHeader>
+                    <Row>
+                        <Col md="10">
+                            <h2>{detBool ? `Modificar usuario ${nombre} ${apellido}` : 'Usuario Nuevo'}</h2>
+                        </Col>
+                        <Col md="2" style={{ textAlign: 'right' }}>
+                            <button
+                                className="btn btn-danger"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    setNvaOffer(false);
+                                }}
+                            >
+                                X
+                            </button>
+                        </Col>
+                    </Row>
+                </CardHeader>
+                <CardBody>
+                    {loading ? (
+                        <div style={{ textAlign: 'center', marginTop: '0' }}>
+                            <Spinner type="grow" color="primary" style={{ width: '100px', height: '100px' }} />
+                        </div>
+                    ) : (
+                        <Form
+                            onSubmit={(e) => {
                                 e.preventDefault();
-                                setNvaOffer(false);
+                                NvoUsuario();
                             }}
-                        >X</button>
-                    </Col>
-                </Row>
-            </CardHeader>
-            <CardBody>
-                {
-                    loading ?
-                        <div style={{ textAlign: "center", marginTop: "0" }}>
-                            <Spinner type="grow" color="primary" style={{ width: "100px", height: "100px" }} />
-                        </div> :
-                        <Form onSubmit={e => {
-                            e.preventDefault();
-                            NvoUsuario();
-                        }} >
+                        >
                             <Row>
                                 <Col md="4">
                                     <FormGroup>
@@ -208,8 +220,9 @@ const UserForm = ({
                                             id="nameTxt"
                                             placeholder="Nombre del usuario..."
                                             value={nombre}
-                                            onChange={e => setnombre(e.target.value)}
-                                            required />
+                                            onChange={(e) => setnombre(e.target.value)}
+                                            required
+                                        />
                                     </FormGroup>
                                 </Col>
                                 <Col md="4">
@@ -221,8 +234,9 @@ const UserForm = ({
                                             id="apellidoTxt"
                                             placeholder="Apellido del usuario..."
                                             value={apellido}
-                                            onChange={e => setApellido(e.target.value)}
-                                            required />
+                                            onChange={(e) => setApellido(e.target.value)}
+                                            required
+                                        />
                                     </FormGroup>
                                 </Col>
                                 <Col md="4">
@@ -234,14 +248,15 @@ const UserForm = ({
                                             id="userTxt"
                                             placeholder="Usuario..."
                                             value={usuario}
-                                            onChange={e => setUsuario(e.target.value)}
+                                            onChange={(e) => setUsuario(e.target.value)}
                                             onFocus={() => NombreUsu()}
-                                            required />
+                                            required
+                                        />
                                     </FormGroup>
                                 </Col>
                             </Row>
                             <Row>
-                                <Col md="6">
+                                <Col md="4">
                                     <FormGroup>
                                         <Label for="emailTxt">Email</Label>
                                         <Input
@@ -250,11 +265,26 @@ const UserForm = ({
                                             id="emailTxt"
                                             placeholder="Email del usuario..."
                                             value={email}
-                                            onChange={e => setEmail(e.target.value)}
-                                            required />
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            required
+                                        />
                                     </FormGroup>
                                 </Col>
-                                <Col md="6">
+                                <Col md="4">
+                                    <FormGroup>
+                                        <Label for="telefonoTxt">Telefono</Label>
+                                        <Input
+                                            type="text"
+                                            name="telefono"
+                                            id="telefonoTxt"
+                                            placeholder="Telefono del usuario..."
+                                            value={telefono}
+                                            onChange={(e) => setTelefono(e.target.value)}
+                                            required
+                                        />
+                                    </FormGroup>
+                                </Col>
+                                <Col md="4">
                                     <FormGroup>
                                         <Label for="emailTxt">Punto de Venta</Label>
                                         <Input
@@ -263,29 +293,33 @@ const UserForm = ({
                                             placeholder="Nombre del Producto..."
                                             type="select"
                                             value={ptoVtaSelect}
-                                            onChange={e => setPtoVtaSelect(e.target.value)}
+                                            onChange={(e) => setPtoVtaSelect(e.target.value)}
                                             required
                                         >
-                                            <option key={0} value={0}>Deposito</option>
-                                            <option key={1} value={"null"}>Todos</option>
+                                            <option key={0} value={0}>
+                                                Deposito
+                                            </option>
+                                            <option key={1} value={'null'}>
+                                                Todos
+                                            </option>
                                             {plantPtosVta}
                                         </Input>
                                     </FormGroup>
                                 </Col>
                             </Row>
                             <Row>
-                                <Col md="12" style={{ textAlign: "center" }}>
+                                <Col md="12" style={{ textAlign: 'center' }}>
                                     <button
                                         className="btn btn-primary"
-                                        style={{ width: "150px", margin: "20px" }}
+                                        style={{ width: '150px', margin: '20px' }}
                                         type="submit"
                                     >
-                                        {detBool ? "Modificar" : "Agregar"}
+                                        {detBool ? 'Modificar' : 'Agregar'}
                                     </button>
                                     <button
                                         className="btn btn-danger"
-                                        style={{ width: "150px", margin: "20px" }}
-                                        onClick={e => {
+                                        style={{ width: '150px', margin: '20px' }}
+                                        onClick={(e) => {
                                             e.preventDefault();
                                             setNvaOffer(false);
                                         }}
@@ -295,10 +329,11 @@ const UserForm = ({
                                 </Col>
                             </Row>
                         </Form>
-                }
-            </CardBody>
-        </Card>
-    </>)
-}
+                    )}
+                </CardBody>
+            </Card>
+        </>
+    );
+};
 
-export default UserForm
+export default UserForm;

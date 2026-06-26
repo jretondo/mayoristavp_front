@@ -435,31 +435,6 @@ const CtaCteListMod = () => {
                                 </CardHeader>
                                 <ListadoTable listado={listado} titulos={titulos} />
                                 <CardFooter className="py-4">
-                                    <Row>
-                                        <Col md="9"></Col>
-                                        <Col md="3">
-                                            <Input
-                                                style={
-                                                    parseInt(total) > 0
-                                                        ? {
-                                                              fontWeight: 'bold',
-                                                              textAlign: 'right',
-                                                              fontSize: '18px',
-                                                              color: 'green',
-                                                          }
-                                                        : {
-                                                              fontWeight: 'bold',
-                                                              textAlign: 'right',
-                                                              fontSize: '18px',
-                                                              color: 'red',
-                                                          }
-                                                }
-                                                disabled
-                                                value={'$ ' + formatMoney(total)}
-                                            />
-                                        </Col>
-                                    </Row>
-                                    <br />
                                     <Paginacion
                                         setPagina={setPagina}
                                         setCall={setActualizar}

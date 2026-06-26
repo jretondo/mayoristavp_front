@@ -131,7 +131,7 @@ const VentasModule = () => {
                                     />
                                     <ButtonOpenCollapse
                                         action={activePagos}
-                                        tittle={'Pagos'}
+                                        tittle={'Salidas de Caja'}
                                         active={moduleActive === 3 ? true : false}
                                     />
                                 </ButtonGroup>

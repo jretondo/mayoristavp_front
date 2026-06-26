@@ -2,12 +2,18 @@ import formatMoney from 'Function/NumberFormat';
 import React, { useContext, useState } from 'react';
 import productSellContext from '../../../../context/productsSell';
 
-const FilaProdSell = ({ id, item }) => {
+const FilaProdSell = ({ id, item, aplicaIva }) => {
     const [updateDiscount, setUpdateDiscount] = useState(false);
     const [updateQuantity, setUpdateQuantity] = useState(false);
     const [newDiscount, setNewDiscount] = useState(item.descuento_porcentaje);
     const [newQuantity, setNewQuantity] = useState(item.cant_prod);
     const { RemoveProduct, aplicarDescuento, cambiarCantidad } = useContext(productSellContext);
+    const precioUnitarioFinal = item.vta_price - (item.vta_price * item.descuento_porcentaje) / 100;
+    const totalItemFinal = precioUnitarioFinal * item.cant_prod;
+    const ivaPorcentaje = Number(item.iva) || 0;
+    const totalItemNeto =
+        aplicaIva && ivaPorcentaje > 0 ? totalItemFinal / (1 + ivaPorcentaje / 100) : totalItemFinal;
+    const totalItemIva = aplicaIva ? totalItemFinal - totalItemNeto : 0;
 
     const actChangeDiscount = () => {
         setUpdateDiscount(true);
@@ -67,7 +73,7 @@ const FilaProdSell = ({ id, item }) => {
                 )}
             </td>
             <td style={{ textAlign: 'center' }}>
-                $ {formatMoney(item.vta_price - (item.vta_price * item.descuento_porcentaje) / 100)}
+                $ {formatMoney(precioUnitarioFinal)}
             </td>
             <td style={{ textAlign: 'center' }} onDoubleClick={() => actChangeDiscount()}>
                 {updateDiscount ? (
@@ -121,7 +127,11 @@ const FilaProdSell = ({ id, item }) => {
             <td style={{ textAlign: 'center' }}>{item.iva}%</td>
             */}
             <td style={{ textAlign: 'center' }}>
-                $ {formatMoney((item.vta_price - (item.vta_price * item.descuento_porcentaje) / 100) * item.cant_prod)}
+                $ {formatMoney(totalItemIva)}
+                {aplicaIva ? ` (${ivaPorcentaje}%)` : ''}
+            </td>
+            <td style={{ textAlign: 'center' }}>
+                $ {formatMoney(totalItemFinal)}
             </td>
             <td className="text-right">
                 <button onClick={() => RemoveProduct(item.key)} className="btn btn-danger" style={{ round: '50%' }}>

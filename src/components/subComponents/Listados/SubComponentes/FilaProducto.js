@@ -7,6 +7,7 @@ import {
     UncontrolledDropdown,
     DropdownToggle,
     Media,
+    Badge,
     // Badge
 } from 'reactstrap';
 import swal from 'sweetalert';
@@ -145,6 +146,46 @@ const FilaProducto = ({
             });
     };
 
+    const toggleOferta = (e) => {
+        e.preventDefault();
+        setEsperar(true);
+        axios
+            .put(
+                `${UrlNodeServer.productsDir.products}/toggleOferta/${item.id_prod}`,
+                { enabled: item.es_oferta === 1 ? 0 : 1 },
+                {
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('user-token'),
+                    },
+                },
+            )
+            .then((res) => {
+                setEsperar(false);
+                const status = parseInt(res.data.status);
+                if (status === 200) {
+                    setMsgStrong(
+                        'Producto ' + (item.es_oferta === 1 ? 'ya no es oferta' : 'es Oferta') + ' con éxito!',
+                    );
+                    setMsgGralAlert('');
+                    setSuccessAlert(true);
+                    setAlertar(!alertar);
+                    setCall(!call);
+                } else {
+                    setMsgStrong('Hubo un error! ');
+                    setMsgGralAlert('Hubo un error. Reintente.');
+                    setSuccessAlert(false);
+                    setAlertar(!alertar);
+                }
+            })
+            .catch(() => {
+                setEsperar(false);
+                setMsgStrong('Hubo un error! ');
+                setMsgGralAlert('Hubo un error. Reintente.');
+                setSuccessAlert(false);
+                setAlertar(!alertar);
+            });
+    };
+
     const copiarDetalle = (e, id) => {
         e.preventDefault();
         setNvaOffer(true);
@@ -252,7 +293,12 @@ const FilaProducto = ({
                                 />
                             </a>
                             <span className="mb-0 text-sm" style={{ marginLeft: '10px' }}>
-                                <span style={{ fontSize: '13px' }}> {item.name}</span>
+                                <span style={{ fontSize: '13px' }}> {item.name}</span>{' '}
+                                {item.es_oferta === 1 && (
+                                    <Badge color="warning" pill>
+                                        Oferta
+                                    </Badge>
+                                )}
                                 <br />
                                 <span style={{ fontSize: '11px' }}>
                                     <Button
@@ -343,6 +389,10 @@ const FilaProducto = ({
                             <DropdownItem href="#pablo" onClick={(e) => toggleProducto(e, item.id_prod)}>
                                 <i className="fas fa-copy"></i>
                                 {item.enabled === 1 ? 'Desactivar' : 'Activar'}
+                            </DropdownItem>
+                            <DropdownItem href="#pablo" onClick={(e) => toggleOferta(e, item.id_prod)}>
+                                <i className="fas fa-copy"></i>
+                                {Number(item.es_oferta) === 0 ? 'Poner en Oferta' : 'Quitar de Oferta'}
                             </DropdownItem>
                         </DropdownMenu>
                     </UncontrolledDropdown>

@@ -26,6 +26,8 @@ const InvoiceHeader = ({
     setCliente,
     userId,
     setUserId,
+    fecha,
+    setFecha,
 }) => {
     const [ptoVtaList, setPtoVtaList] = useState(<option>No hay puntos de venta relacionados</option>);
     const [cbteStr, setCbteStr] = useState('');
@@ -111,8 +113,8 @@ const InvoiceHeader = ({
                                             <Label for="exampleEmail">Fecha</Label>
                                             <Input
                                                 type="date"
-                                                value={moment(new Date()).format('YYYY-MM-DD')}
-                                                disabled
+                                                value={moment(fecha).format('YYYY-MM-DD')}
+                                                onChange={(e) => setFecha(e.target.value)}
                                             />
                                         </FormGroup>
                                     </Col>
@@ -157,7 +159,12 @@ const InvoiceHeader = ({
                                                     ) : ptoVta.cond_iva === 1 ? (
                                                         parseInt(clienteBool) === 1 ? (
                                                             <>
-                                                                <option value={1}>A</option>
+                                                                {parseInt(ptoVta.fact_m) === 0 && (
+                                                                    <option value={1}>A</option>
+                                                                )}
+                                                                {parseInt(ptoVta.fact_m) === 1 && (
+                                                                    <option value={51}>M</option>
+                                                                )}
                                                                 <option value={6}>B</option>
                                                             </>
                                                         ) : (

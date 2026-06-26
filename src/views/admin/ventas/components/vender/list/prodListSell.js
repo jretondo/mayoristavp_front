@@ -5,9 +5,9 @@ import { Col, Row } from 'reactstrap';
 import productsSellContext from '../../../../../../context/productsSell';
 import { roundNumber } from '../../../../../../Function/roundNumber';
 
-const titulos = ['Producto', 'Cant.', 'Precio Un..', 'Descuento (%)', '$ Final', ''];
+const titulos = ['Producto', 'Cant.', 'Precio Un..', 'Descuento (%)', 'IVA', '$ Final', ''];
 
-const ProdListSell = () => {
+const ProdListSell = ({ aplicaIva }) => {
     const [listProdVenta, setListProdVenta] = useState(
         <tr>
             <td>No hay productos cargados aún</td>
@@ -27,7 +27,7 @@ const ProdListSell = () => {
                     if (key === lista.length - 1) {
                         setTotalPrecio(total);
                     }
-                    return <FilaProdSell key={key} id={key} item={item} />;
+                    return <FilaProdSell key={key} id={key} item={item} aplicaIva={aplicaIva} />;
                 }),
             );
         } else {
@@ -39,7 +39,7 @@ const ProdListSell = () => {
             );
         }
         // eslint-disable-next-line
-    }, [productsSellList]);
+    }, [productsSellList, aplicaIva]);
 
     return (
         <Row style={{ marginTop: '30px' }}>

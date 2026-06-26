@@ -1,3 +1,13 @@
+## [1.1.1] 2026-06-26
+### Changed
+- La pantalla de venta ahora discrimina IVA incluido en el precio final sin sumar IVA al total.
+- El resumen de venta calcula neto e IVA por producto usando la alicuota configurada en cada producto.
+- La lista de productos de venta muestra el IVA discriminado y la alicuota aplicada.
+
+### Fixed
+- Alinea la validacion de pagos con el nuevo total final sin incremento por IVA.
+- Mantiene el flujo de pedidos no fiscales y fecha seleccionada en la venta.
+
 ## [1.1.0] 2020-02-10
 ### Bug fixing
 - https://github.com/creativetimofficial/argon-dashboard-react/issues/18 (Added this in live docs, we need for our product to have a homepage prop inside the package.json. If build is not working, just delete the homepage prop from inside the package.json, or configure it to your own specs.)

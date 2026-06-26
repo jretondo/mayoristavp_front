@@ -31,6 +31,7 @@ const Ventas = ({ setValidPV }) => {
 
     const [cliente, setCliente] = useState(false);
     const [userId, setUserId] = useState(localStorage.getItem('userId'));
+    const [fecha, setFecha] = useState(moment(new Date()).format('YYYY-MM-DD'));
 
     const { totalPrecio, cancelarCompra, productsSellList, orderId, sinStock } = useContext(productsSellContext);
 
@@ -58,7 +59,7 @@ const Ventas = ({ setValidPV }) => {
             if (parseInt(clienteBool) === 0) {
                 data = {
                     dataFact: {
-                        fecha: moment(new Date()).format('YYYY-MM-DD'),
+                        fecha: moment(fecha).format('YYYY-MM-DD'),
                         pv_id: ptoVta.id,
                         fiscal: factFiscBool,
                         forma_pago: 5,
@@ -75,7 +76,7 @@ const Ventas = ({ setValidPV }) => {
             } else {
                 data = {
                     dataFact: {
-                        fecha: moment(new Date()).format('YYYY-MM-DD'),
+                        fecha: moment(fecha).format('YYYY-MM-DD'),
                         pv_id: ptoVta.id,
                         fiscal: factFiscBool,
                         forma_pago: 5,
@@ -94,8 +95,7 @@ const Ventas = ({ setValidPV }) => {
             }
             if (
                 totalPrecio === 0 ||
-                Math.round(total * 100) / 100 !==
-                    Math.round((totalPrecio - totalPrecio * (descuentoPerc / 100)) * 100) / 100
+                Math.round(total * 100) / 100 !== totalFacturaRedondeado
             ) {
                 swal(
                     'Error: Total del pago!',
@@ -189,38 +189,38 @@ const Ventas = ({ setValidPV }) => {
                     if (parseInt(clienteBool) === 0) {
                         data = {
                             dataFact: {
-                                fecha: moment(new Date()).format('YYYY-MM-DD'),
+                                fecha: moment(fecha).format('YYYY-MM-DD'),
                                 pv_id: ptoVta.id,
-                                fiscal: factFiscBool,
+                                fiscal: 0,
                                 forma_pago: 5,
-                                enviar_email: envioEmailBool,
-                                cliente_email: emailCliente,
+                                enviar_email: false,
+                                cliente_email: '',
                                 lista_prod: productsSellList,
                                 descuentoPerc: descuentoPerc,
                                 variosPagos: variosPagos,
-                                t_fact: parseInt(tfact),
+                                t_fact: 0,
                             },
-                            fiscal: factFiscBool,
+                            fiscal: 0,
                             user_id: userId,
                             orderId: pedido,
                         };
                     } else {
                         data = {
                             dataFact: {
-                                fecha: moment(new Date()).format('YYYY-MM-DD'),
+                                fecha: moment(fecha).format('YYYY-MM-DD'),
                                 pv_id: ptoVta.id,
-                                fiscal: factFiscBool,
+                                fiscal: 0,
                                 forma_pago: 5,
-                                enviar_email: envioEmailBool,
-                                cliente_email: emailCliente,
+                                enviar_email: false,
+                                cliente_email: '',
                                 cliente_bool: parseInt(clienteBool),
                                 lista_prod: productsSellList,
                                 descuentoPerc: descuentoPerc,
                                 variosPagos: variosPagos,
-                                t_fact: parseInt(tfact),
+                                t_fact: 0,
                                 cliente_id: cliente.id,
                             },
-                            fiscal: factFiscBool,
+                            fiscal: 0,
                             user_id: userId,
                             orderId: pedido,
                         };
@@ -249,15 +249,7 @@ const Ventas = ({ setValidPV }) => {
                             setEmailCliente('');
                             setCliente(false);
                             setUserId(localStorage.getItem('userId'));
-                            if (envioEmailBool) {
-                                swal(
-                                    'Nueva Factura!',
-                                    'La factura se ha generado con éxito y pronto le llegará al cliente por email!',
-                                    'success',
-                                );
-                            } else {
-                                swal('Nueva Factura!', 'La factura se ha generado con éxito!', 'success');
-                            }
+                            swal('Pedido realizado!', 'La orden de pedido se generó con éxito.', 'success');
                         })
                         .catch(async (err) => {
                             console.log('object :>> ', err);
@@ -271,7 +263,7 @@ const Ventas = ({ setValidPV }) => {
                             } else {
                                 swal(
                                     'Error inesperado!',
-                                    'La factura no se pudo generar por un error en los datos! Controle que no falten datos importantes en la cabecera',
+                                    'La orden de pedido no se pudo generar. Controle que no falten datos importantes.',
                                     'error',
                                 );
                             }
@@ -279,7 +271,6 @@ const Ventas = ({ setValidPV }) => {
                         .finally(() => {
                             setProcessing(false);
                         });
-                    swal('Pedido realizado!', 'El pedido se ha realizado con éxito!', 'success');
                 } else {
                     swal('Error!', 'Hubo un error. Controle que haya colocado un número válido!', 'error');
                 }
@@ -316,10 +307,48 @@ const Ventas = ({ setValidPV }) => {
             setCliente(false);
         }
     }, [clienteBool]);
+
+    const aplicaIva =
+        parseInt(factFiscBool) === 1 &&
+        Number(ptoVta.cond_iva) === 1 &&
+        [1, 6, 51].includes(parseInt(tfact));
+    const descuentoGeneralValido = parseFloat(descuentoPerc) > 0 && parseFloat(descuentoPerc) <= 100;
+    const totalAntesDescuento = totalPrecio;
+    const totalConDescuento =
+        descuentoGeneralValido
+            ? totalAntesDescuento - totalAntesDescuento * (descuentoPerc / 100)
+            : totalAntesDescuento;
+    const totalesIva = productsSellList.reduce(
+        (acc, item) => {
+            const descuentoItem = Number(item.descuento_porcentaje) || 0;
+            const ivaPorcentaje = Number(item.iva) || 0;
+            const totalItem =
+                Number(item.vta_price) * Number(item.cant_prod) * (1 - descuentoItem / 100);
+            const netoItem =
+                aplicaIva && ivaPorcentaje > 0 ? totalItem / (1 + ivaPorcentaje / 100) : totalItem;
+            const ivaItem = aplicaIva ? totalItem - netoItem : 0;
+
+            return {
+                neto: acc.neto + netoItem,
+                iva: acc.iva + ivaItem,
+            };
+        },
+        { neto: 0, iva: 0 },
+    );
+    const factorDescuentoGeneral = descuentoGeneralValido ? 1 - descuentoPerc / 100 : 1;
+    const netoGravado = totalesIva.neto * factorDescuentoGeneral;
+    const totalIva = totalesIva.iva * factorDescuentoGeneral;
+    const totalFacturaRedondeado = Math.round(totalConDescuento * 100) / 100;
+
     console.log('sinStock :>> ', sinStock);
     return (
         <Card>
-            <ModalChange descuentoPerc={descuentoPerc} modal={modal1} toggle={() => setModal1(!modal1)} />
+            <ModalChange
+                descuentoPerc={descuentoPerc}
+                modal={modal1}
+                toggle={() => setModal1(!modal1)}
+                totalFactura={totalAntesDescuento}
+            />
             <CardBody>
                 {processing ? (
                     <div style={{ textAlign: 'center' }}>
@@ -348,13 +377,15 @@ const Ventas = ({ setValidPV }) => {
                             setCliente={setCliente}
                             userId={userId}
                             setUserId={setUserId}
+                            fecha={fecha}
+                            setFecha={setFecha}
                         />
 
                         <br />
 
                         <ProductFinder />
 
-                        <ProdListSell />
+                        <ProdListSell aplicaIva={aplicaIva} />
                         <Row>
                             <Col md="6">
                                 <FormasPagoMod
@@ -364,31 +395,81 @@ const Ventas = ({ setValidPV }) => {
                                     factFiscBool={factFiscBool}
                                     total={total}
                                     setTotal={setTotal}
-                                    totalPrecio={totalPrecio}
+                                    totalPrecio={totalAntesDescuento}
                                     cliente={cliente}
                                     descuentoPerc={descuentoPerc}
                                 />
                             </Col>
                             <Col md="6">
-                                <Row style={{ marginTop: 0 }}>
-                                    <Col md="4" style={{ marginLeft: 'auto', textAlign: 'right' }}>
-                                        <Label style={{ fontSize: '25px', fontWeight: 'bold' }}>Subtotal:</Label>
-                                    </Col>
-                                    <Col md="8">
-                                        <FormGroup>
-                                            <Input
-                                                style={{
-                                                    fontSize: '20px',
-                                                    fontWeight: 'bold',
-                                                    textAlign: 'right',
-                                                }}
-                                                type="text"
-                                                value={'$ ' + formatMoney(totalPrecio)}
-                                                disabled
-                                            />
-                                        </FormGroup>
-                                    </Col>
-                                </Row>
+                                {!aplicaIva && (
+                                    <Row style={{ marginTop: 0 }}>
+                                        <Col md="4" style={{ marginLeft: 'auto', textAlign: 'right' }}>
+                                            <Label style={{ fontSize: '25px', fontWeight: 'bold' }}>Subtotal:</Label>
+                                        </Col>
+                                        <Col md="8">
+                                            <FormGroup>
+                                                <Input
+                                                    style={{
+                                                        fontSize: '20px',
+                                                        fontWeight: 'bold',
+                                                        textAlign: 'right',
+                                                    }}
+                                                    type="text"
+                                                    value={'$ ' + formatMoney(totalAntesDescuento)}
+                                                    disabled
+                                                />
+                                            </FormGroup>
+                                        </Col>
+                                    </Row>
+                                )}
+
+                                {aplicaIva && (
+                                    <>
+                                        <Row style={{ marginTop: 0 }}>
+                                            <Col md="4" style={{ marginLeft: 'auto', textAlign: 'right' }}>
+                                                <Label style={{ fontSize: '25px', fontWeight: 'bold' }}>
+                                                    Neto gravado:
+                                                </Label>
+                                            </Col>
+                                            <Col md="8">
+                                                <FormGroup>
+                                                    <Input
+                                                        style={{
+                                                            fontSize: '20px',
+                                                            fontWeight: 'bold',
+                                                            textAlign: 'right',
+                                                        }}
+                                                        type="text"
+                                                        value={'$ ' + formatMoney(netoGravado)}
+                                                        disabled
+                                                    />
+                                                </FormGroup>
+                                            </Col>
+                                        </Row>
+
+                                        <Row style={{ marginTop: 0 }}>
+                                            <Col md="4" style={{ marginLeft: 'auto', textAlign: 'right' }}>
+                                                <Label style={{ fontSize: '25px', fontWeight: 'bold' }}>
+                                                    IVA:
+                                                </Label>
+                                            </Col>
+                                            <Col md="8">
+                                                <FormGroup>
+                                                    <Input
+                                                        style={{
+                                                            fontSize: '20px',
+                                                            fontWeight: 'bold',
+                                                            textAlign: 'right',
+                                                        }}
+                                                        type="text"
+                                                        value={'$ ' + formatMoney(totalIva)}
+                                                        disabled
+                                                    />
+                                                </FormGroup>
+                                            </Col>
+                                        </Row>
+                                    </>
+                                )}
 
                                 <Row style={{ marginTop: 0 }}>
                                     <Col md="4" style={{ marginLeft: 'auto', textAlign: 'right' }}>
@@ -426,7 +507,7 @@ const Ventas = ({ setValidPV }) => {
                                                             '$ ' +
                                                             formatMoney(
                                                                 descuentoPerc > 0 && descuentoPerc <= 100
-                                                                    ? totalPrecio * (descuentoPerc / 100)
+                                                                    ? totalAntesDescuento * (descuentoPerc / 100)
                                                                     : 0,
                                                             )
                                                         }
@@ -451,15 +532,7 @@ const Ventas = ({ setValidPV }) => {
                                                     textAlign: 'right',
                                                 }}
                                                 type="text"
-                                                value={
-                                                    '$ ' +
-                                                    formatMoney(
-                                                        parseFloat(descuentoPerc) > 0 &&
-                                                            parseFloat(descuentoPerc) <= 100
-                                                            ? totalPrecio - totalPrecio * (descuentoPerc / 100)
-                                                            : totalPrecio,
-                                                    )
-                                                }
+                                                value={'$ ' + formatMoney(totalConDescuento)}
                                                 disabled
                                             />
                                         </FormGroup>
@@ -472,8 +545,7 @@ const Ventas = ({ setValidPV }) => {
                                 <button
                                     className={
                                         totalPrecio === 0 ||
-                                        Math.round(total * 100) / 100 !==
-                                            Math.round((totalPrecio - totalPrecio * (descuentoPerc / 100)) * 100) / 100
+                                        Math.round(total * 100) / 100 !== totalFacturaRedondeado
                                             ? 'btn btn-gray'
                                             : 'btn btn-success'
                                     }
@@ -481,8 +553,7 @@ const Ventas = ({ setValidPV }) => {
                                     disabled={
                                         sinStock ||
                                         totalPrecio === 0 ||
-                                        Math.round(total * 100) / 100 !==
-                                            Math.round((totalPrecio - totalPrecio * (descuentoPerc / 100)) * 100) / 100
+                                        Math.round(total * 100) / 100 !== totalFacturaRedondeado
                                             ? true
                                             : false
                                     }

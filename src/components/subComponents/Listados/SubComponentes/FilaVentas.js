@@ -243,6 +243,7 @@ const FilaVentas = ({ id, item, setActualizar, actualizar }) => {
                     )}
                 </td>
                 <td style={{ textAlign: 'center' }}>$ {formatMoney(item.total_fact)}</td>
+                <td style={{ textAlign: 'center' }}>{item.cat_pago ? 'Categoría de Pago: ' + item.cat_pago : ''}</td>
                 <td className="text-right">
                     {wait ? (
                         <div style={{ textAlign: 'center' }}>

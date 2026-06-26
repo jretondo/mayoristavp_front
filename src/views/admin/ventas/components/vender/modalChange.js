@@ -1,22 +1,21 @@
 import formatMoney from 'Function/NumberFormat';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Col, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
-import productsSellContext from '../../../../../context/productsSell';
 
 const ModalChange = ({
     modal,
     toggle,
-    descuentoPerc
+    descuentoPerc,
+    totalFactura,
 }) => {
 
-    const { totalPrecio } = useContext(productsSellContext)
     const [abona, setAbona] = useState(0)
-    const [total, setTotal] = useState(parseFloat((totalPrecio * (1 - (parseFloat(descuentoPerc) / 100)))))
+    const [total, setTotal] = useState(parseFloat((totalFactura * (1 - (parseFloat(descuentoPerc) / 100)))))
 
 
     useEffect(() => {
-        setTotal(parseFloat((totalPrecio * (1 - (parseFloat(descuentoPerc) / 100)))))
-    }, [totalPrecio, descuentoPerc, modal])
+        setTotal(parseFloat((totalFactura * (1 - (parseFloat(descuentoPerc) / 100)))))
+    }, [totalFactura, descuentoPerc, modal])
 
     useEffect(() => {
         setTimeout(() => {

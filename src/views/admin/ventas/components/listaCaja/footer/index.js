@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Row } from 'reactstrap';
 import TotalItemsVtas from './totalItem';
 import TotalEfvo from './totalEfvo';
+import TotalItemPagos from './totalPagoItem';
 
 const FooterListVentas = ({ listaCaja, ptosVta, setPtoVta }) => {
     const [totalesPlant, setTotalesPlant] = useState(<></>);
     const [totalFinalPlant, setTotalFinalPlant] = useState(<></>);
     const [totalCtaCtePlant, setTotalCtaCtePlant] = useState(<></>);
+    const [totalPagos, setTotalPagos] = useState(<></>);
 
     const defaultValues = () => {
         setTotalesPlant(<></>);
@@ -35,6 +37,7 @@ const FooterListVentas = ({ listaCaja, ptosVta, setPtoVta }) => {
 
             const totales = listaCaja.totales;
             const totales2 = listaCaja.totales2;
+            const totalesPagos = listaCaja.totalesPagos;
             if (totales2.length > 0) {
                 // eslint-disable-next-line
                 totales2.map((item) => {
@@ -100,6 +103,19 @@ const FooterListVentas = ({ listaCaja, ptosVta, setPtoVta }) => {
                     }
                 });
             }
+            if (totalesPagos.length > 0) {
+                setTotalPagos(
+                    totalesPagos.map((item) => (
+                        <TotalItemPagos
+                            key={item.id}
+                            id={item.id}
+                            colSize={4}
+                            titulo={item.cat_pago}
+                            total={item.SUMA}
+                        />
+                    )),
+                );
+            }
             if (totales.length > 0) {
                 if (efectivo !== 0) {
                     efectivoRow = <TotalItemsVtas totalId={0} totalImporte={efectivo} colSize={4} />;
@@ -161,6 +177,9 @@ const FooterListVentas = ({ listaCaja, ptosVta, setPtoVta }) => {
     return (
         <>
             <Row>{totalesPlant}</Row>
+            <hr />
+            <h3>Totales de Pagos</h3>
+            <Row>{totalPagos}</Row>
             <hr />
             <Row>
                 {totalFinalPlant}

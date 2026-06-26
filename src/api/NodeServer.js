@@ -94,6 +94,7 @@ const productsDir = {
         codBarra: products + '/codBarra',
         cost: products + '/cost',
         pdf: products + '/pdf',
+        csv: products + '/csv',
     },
 };
 

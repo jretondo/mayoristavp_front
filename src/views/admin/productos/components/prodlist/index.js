@@ -65,6 +65,7 @@ const ProdList = ({
     const [productoBuscado, setProductoBuscado] = useState('');
     const [marcaBuscada, setMarcaBuscada] = useState('');
     const [proveedorBuscado, setProveedorBuscado] = useState('');
+    const [familiaBuscada, setFamiliaBuscada] = useState('');
     const [fixAmount, setFixAmount] = useState(false);
     const [updateListMarca, setUpdateListMarca] = useState(false);
     const [updateListProveedor, setUpdateListProveedor] = useState(false);
@@ -74,6 +75,7 @@ const ProdList = ({
     const [updateListProveedorValue, setUpdateListProveedorValue] = useState('');
     const [updateListCostoValue, setUpdateListCostoValue] = useState('');
     const [updateListVentaValue, setUpdateListVentaValue] = useState('');
+    const [esOferta, setEsOferta] = useState(false);
 
     useEffect(() => {
         ListarProductos();
@@ -83,7 +85,7 @@ const ProdList = ({
     useEffect(() => {
         ListarProductos();
         // eslint-disable-next-line
-    }, [call, pagina]);
+    }, [call, pagina, esOferta]);
 
     useEffect(() => {
         if (!detallesBool) {
@@ -114,9 +116,11 @@ const ProdList = ({
                 name: productoBuscado,
                 brand: marcaBuscada,
                 provider: proveedorBuscado,
+                family: familiaBuscada,
                 advanced: true,
             };
         }
+        data.esOferta = esOferta;
         await axios
             .get(`${UrlNodeServer.productsDir.products}/${pagina}`, {
                 params: data,
@@ -261,7 +265,7 @@ const ProdList = ({
 
         await axios
             .post(`${UrlNodeServer.productsDir.sub.varCost}`, data, {
-                params: query,
+                params: query + '&esOferta=' + esOferta,
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem('user-token'),
                 },
@@ -397,6 +401,50 @@ const ProdList = ({
             });
     };
 
+    const printExcelOfProducts = async () => {
+        setEsperar(true);
+        let data = '';
+        if (busquedaBool && !advancedSearch) {
+            data = {
+                query: palabraBuscada,
+            };
+        } else if (advancedSearch) {
+            data = {
+                query: '',
+                name: productoBuscado,
+                brand: marcaBuscada,
+                provider: proveedorBuscado,
+                advanced: true,
+            };
+        }
+
+        await axios
+            .get(UrlNodeServer.productsDir.sub.csv, {
+                params: data,
+                responseType: 'arraybuffer',
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('user-token'),
+                    Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                },
+            })
+            .then((res) => {
+                let headerLine = res.headers['content-disposition'];
+                const largo = parseInt(headerLine.length);
+                let filename = headerLine.substring(21, largo);
+                var blob = new Blob([res.data], {
+                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                });
+                FileSaver.saveAs(blob, filename);
+                swal('Lista de produsctos!', 'La lista ha sido impresa con éxito!', 'success');
+            })
+            .catch((err) => {
+                swal('Lista de produsctos!', 'Hubo un errore al querer imprimir la lista!', 'error');
+            })
+            .finally(() => {
+                setEsperar(false);
+            });
+    };
+
     useEffect(() => {
         if (!advancedSearch) {
             setProductoBuscado('');
@@ -419,11 +467,23 @@ const ProdList = ({
                     <Card className="shadow">
                         <CardHeader className="border-0">
                             <Row>
-                                <Col md="4" style={{ paddingTop: '18px' }}>
+                                <Col md="2" style={{ paddingTop: '18px' }}>
                                     <h2 className="mb-0" style={{ textAlign: 'center' }}>
                                         Lista de Productos
                                     </h2>
                                 </Col>
+                                <Col md="2">
+                                    <Label check className="mt-3">
+                                        <Input
+                                            style={{ fontSize: '20px' }}
+                                            type="checkbox"
+                                            checked={esOferta}
+                                            onChange={(e) => setEsOferta(e.target.checked)}
+                                        />{' '}
+                                        <span style={{ fontSize: '20px' }}>Ofertas</span>
+                                    </Label>
+                                </Col>
+
                                 <Col md="8" style={{ textAlign: 'right' }}>
                                     {advancedSearch ? (
                                         <AdvancedSearch
@@ -436,6 +496,8 @@ const ProdList = ({
                                             proveedorBuscado={proveedorBuscado}
                                             setProveedorBuscado={setProveedorBuscado}
                                             ListarProductos={ListarProductos}
+                                            familiaBuscada={familiaBuscada}
+                                            setFamiliaBuscada={setFamiliaBuscada}
                                         />
                                     ) : (
                                         <Row>
@@ -742,6 +804,22 @@ const ProdList = ({
                                                         }}
                                                     >
                                                         Imprimir PDF
+                                                    </button>
+                                                </Col>
+                                                <Col md="3" style={{ marginTop: '20px', textAlign: 'center' }}>
+                                                    <button
+                                                        className="btn btn-success"
+                                                        style={
+                                                            nvaOffer
+                                                                ? { display: 'none', width: '160px', margin: 'auto' }
+                                                                : { display: 'block', width: '160px', margin: 'auto' }
+                                                        }
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            printExcelOfProducts();
+                                                        }}
+                                                    >
+                                                        Imprimir Excel
                                                     </button>
                                                 </Col>
                                                 <Col md="3" style={{ marginTop: '20px', textAlign: 'center' }}>

@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Col, Row } from 'reactstrap';
 import FilaEspera from './FilaEspera';
 
-const titulos = ['Fecha', 'Cliente', 'Factura', 'Detalles', 'Forma de Pago', 'Total', ''];
+const titulos = ['Fecha', 'Cliente/Proveedor', 'Comprobante', 'Detalles', 'Forma de Pago', 'Total', 'Otro', ''];
 
 const VentasListMod = ({ listaCaja, pagina, setPagina, loading, setActualizar, actualizar }) => {
     const [call, setCall] = useState(false);
