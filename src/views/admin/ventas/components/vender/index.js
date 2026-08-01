@@ -55,6 +55,126 @@ const parseErrorResponse = (err) => {
     return defaultMessage;
 };
 
+const getInvoicePublicUrl = (pdfUrl) => {
+    if (!pdfUrl) {
+        return '';
+    }
+
+    const publicBase = UrlNodeServer.invoicesDir.invoices.replace(/\/api\/invoices$/, '/static');
+    const cleanPdfUrl = pdfUrl.replace(/^\/static/, '');
+    return publicBase + cleanPdfUrl;
+};
+
+const createInvoicePrintWindow = () => {
+    const invoiceWindow = window.open('', '_blank');
+    if (!invoiceWindow) {
+        return null;
+    }
+
+    invoiceWindow.document.write(`
+        <!doctype html>
+        <html>
+            <head>
+                <title>Generando comprobante</title>
+                <style>
+                    body {
+                        margin: 0;
+                        height: 100vh;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-family: Arial, sans-serif;
+                        color: #172b4d;
+                        background: #f2f4f8;
+                    }
+                </style>
+            </head>
+            <body>Generando comprobante...</body>
+        </html>
+    `);
+    invoiceWindow.document.close();
+    return invoiceWindow;
+};
+
+const openInvoicePrintWindow = ({ html, fileName, pdfUrl }, invoiceWindow) => {
+    if (!invoiceWindow) {
+        swal('Comprobante generado', 'El navegador bloqueó la ventana de impresión.', 'warning');
+        return;
+    }
+
+    const htmlBlob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const htmlUrl = URL.createObjectURL(htmlBlob);
+    const pdfLink = getInvoicePublicUrl(pdfUrl);
+
+    invoiceWindow.document.write(`
+        <!doctype html>
+        <html>
+            <head>
+                <title>${fileName || 'Comprobante'}</title>
+                <style>
+                    html, body {
+                        margin: 0;
+                        height: 100%;
+                        font-family: Arial, sans-serif;
+                        background: #f2f4f8;
+                    }
+                    .toolbar {
+                        height: 52px;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        padding: 0 12px;
+                        background: #172b4d;
+                        color: #fff;
+                        box-sizing: border-box;
+                    }
+                    .toolbar strong {
+                        flex: 1;
+                        font-size: 14px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
+                    .toolbar button,
+                    .toolbar a {
+                        border: 0;
+                        border-radius: 4px;
+                        padding: 8px 12px;
+                        background: #fff;
+                        color: #172b4d;
+                        font-size: 13px;
+                        cursor: pointer;
+                        text-decoration: none;
+                    }
+                    iframe {
+                        width: 100%;
+                        height: calc(100% - 52px);
+                        border: 0;
+                        background: #fff;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="toolbar">
+                    <strong>${fileName || 'Comprobante generado'}</strong>
+                    <button id="printButton">Imprimir</button>
+                    ${pdfLink ? `<a href="${pdfLink}" target="_blank" rel="noreferrer">PDF</a>` : ''}
+                </div>
+                <iframe id="invoiceFrame" src="${htmlUrl}"></iframe>
+                <script>
+                    document.getElementById('printButton').addEventListener('click', function () {
+                        document.getElementById('invoiceFrame').contentWindow.print();
+                    });
+                    window.addEventListener('beforeunload', function () {
+                        URL.revokeObjectURL('${htmlUrl}');
+                    });
+                </script>
+            </body>
+        </html>
+    `);
+    invoiceWindow.document.close();
+};
+
 const Ventas = ({ setValidPV }) => {
     const [clienteBool, setClienteBool] = useState(0);
     const [factFiscBool, setFactFiscBool] = useState(0);
@@ -152,20 +272,19 @@ const Ventas = ({ setValidPV }) => {
 
     const generarFacturaFinal = async (data) => {
         setProcessing(true);
+        const invoiceWindow = createInvoicePrintWindow();
         await axios
             .post(UrlNodeServer.invoicesDir.invoices, data, {
-                responseType: 'arraybuffer',
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem('user-token'),
-                    Accept: 'application/pdf',
+                    Accept: 'application/json',
                 },
             })
             .then((res) => {
-                let headerLine = res.headers['content-disposition'];
-                const largo = parseInt(headerLine.length);
-                let filename = headerLine.substring(21, largo);
-                var blob = new Blob([res.data], { type: 'application/pdf' });
-                FileSaver.saveAs(blob, filename);
+                const invoiceData = res.data && res.data.body ? res.data.body : {};
+                if (invoiceData.html) {
+                    openInvoicePrintWindow(invoiceData, invoiceWindow);
+                }
                 cancelarCompra();
                 setDescuentoPer(0);
                 setFactFiscBool(0);
@@ -186,6 +305,10 @@ const Ventas = ({ setValidPV }) => {
                 }
             })
             .catch(async (err) => {
+                if (invoiceWindow) {
+                    invoiceWindow.close();
+                }
+
                 if (err.code === 'ECONNABORTED') {
                     await swal(
                         'Tiempo de espera superado!',
