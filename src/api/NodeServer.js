@@ -155,6 +155,8 @@ const invoicesDir = {
         resetTokenAfip: invoices + '/resetTokenAfip',
         order: invoices + '/orderPDF',
         categoriasPago: invoices + '/categoriasPago',
+        refacturarIva: invoices + '/refacturarIva',
+        repararRefacturacionIva: invoices + '/repararRefacturacionIva',
     },
 };
 

@@ -1,8 +1,8 @@
-import UrlNodeServer from 'api/NodeServer'
-import React from 'react'
-import { Col, FormFeedback, FormGroup, Input, Label } from 'reactstrap'
-import { verificadorCuit } from 'Function/VerificadorCuit'
-import axios from 'axios'
+import UrlNodeServer from 'api/NodeServer';
+import React from 'react';
+import { Col, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
+import { verificadorCuit } from 'Function/VerificadorCuit';
+import axios from 'axios';
 
 const NdocInput = ({
     tipoDoc,
@@ -23,145 +23,155 @@ const NdocInput = ({
 }) => {
     const Find = async () => {
         if (parseInt(tipoDoc) === 96) {
-            const largo = ndoc.length
+            const largo = ndoc.length;
             if (largo > 8 || largo < 7) {
-                setInvalidNdoc(true)
+                setInvalidNdoc(true);
             } else {
-                setInvalidNdoc(false)
+                setInvalidNdoc(false);
             }
-            await axios.get(`${UrlNodeServer.clientesDir.clientes}/${1}`, {
-                params: {
-                    search: ndoc,
-                    cantPerPage: 1
-                },
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-                }
-            })
-                .then(res => {
-                    const respuesta = res.data
-                    const status = parseInt(respuesta.status)
+            await axios
+                .get(`${UrlNodeServer.clientesDir.clientes}/${1}`, {
+                    params: {
+                        search: ndoc,
+                        cantPerPage: 1,
+                    },
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('user-token'),
+                    },
+                })
+                .then((res) => {
+                    const respuesta = res.data;
+                    const status = parseInt(respuesta.status);
                     if (status === 200) {
-                        const body = respuesta.body
+                        const body = respuesta.body;
                         if (body.pagesObj.totalPag > 0) {
-                            const cliente = body.data[0]
-                            let tipoCliente = parseInt(cliente.cuit)
+                            const cliente = body.data[0];
+                            let tipoCliente = parseInt(cliente.cuit);
                             if (tipoCliente === 0) {
-                                tipoCliente = 80
+                                tipoCliente = 80;
                             } else {
-                                tipoCliente = 96
+                                tipoCliente = 96;
                             }
-                            setInvalidNdoc(false)
-                            setTipoDoc(tipoCliente)
-                            setNdoc(cliente.ndoc)
+                            setInvalidNdoc(false);
+                            setTipoDoc(tipoCliente);
+                            setNdoc(cliente.ndoc);
                             console.log('cliente :>> ', cliente);
-                            setCondIvaCli(parseInt(cliente.cond_iva))
-                            setRazSoc(cliente.razsoc)
-                            setDireccion(cliente.direccion)
-                            setTelefono(cliente.telefono)
+                            setCondIvaCli(parseInt(cliente.cond_iva));
+                            setRazSoc(cliente.razsoc);
+                            setDireccion(cliente.direccion);
+                            setTelefono(cliente.telefono);
                             if (cliente.email.length > 0) {
-                                setEmailCliente(cliente.email)
-                                setEnvioEmailBool(1)
+                                setEmailCliente(cliente.email);
+                                setEnvioEmailBool(1);
                             }
                         } else {
-                            setEmailCliente("")
-                            setEnvioEmailBool(0)
-                            setCondIvaCli(0)
+                            setEmailCliente('');
+                            setEnvioEmailBool(0);
+                            setCondIvaCli(0);
                         }
                     } else {
-                        setEmailCliente("")
-                        setEnvioEmailBool(0)
-                        setCondIvaCli(0)
+                        setEmailCliente('');
+                        setEnvioEmailBool(0);
+                        setCondIvaCli(0);
                     }
                 })
                 .catch(() => {
-                    setEmailCliente("")
-                    setEnvioEmailBool(0)
-                    setCondIvaCli(0)
-                })
+                    setEmailCliente('');
+                    setEnvioEmailBool(0);
+                    setCondIvaCli(0);
+                });
         } else {
-            setInvalidNdoc(false)
-            await getDataFiscalClient()
-            await axios.get(`${UrlNodeServer.clientesDir.clientes}/${1}`, {
-                params: {
-                    search: ndoc,
-                    cantPerPage: 1
-                },
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-                }
-            })
-                .then(res => {
-                    const respuesta = res.data
-                    const status = parseInt(respuesta.status)
+            setInvalidNdoc(false);
+            await getDataFiscalClient();
+            await axios
+                .get(`${UrlNodeServer.clientesDir.clientes}/${1}`, {
+                    params: {
+                        search: ndoc,
+                        cantPerPage: 1,
+                    },
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('user-token'),
+                    },
+                })
+                .then((res) => {
+                    const respuesta = res.data;
+                    const status = parseInt(respuesta.status);
                     if (status === 200) {
-                        const body = respuesta.body
+                        const body = respuesta.body;
                         if (body.pagesObj.totalPag > 0) {
-                            const cliente = body.data[0]
-                            let tipoCliente = parseInt(cliente.cuit)
+                            const cliente = body.data[0];
+                            let tipoCliente = parseInt(cliente.cuit);
                             if (tipoCliente === 0) {
-                                tipoCliente = 80
+                                tipoCliente = 80;
                             } else {
-                                tipoCliente = 96
+                                tipoCliente = 96;
                             }
-                            setInvalidNdoc(false)
-                            setTipoDoc(tipoCliente)
-                            setNdoc(cliente.ndoc)
-                            setRazSoc(cliente.razsoc)
-                            setDireccion(cliente.direccion)
-                            setTelefono(cliente.telefono)
-                            setCondIvaCli(parseInt(cliente.cond_iva))
+                            setInvalidNdoc(false);
+                            setTipoDoc(tipoCliente);
+                            setNdoc(cliente.ndoc);
+                            setRazSoc(cliente.razsoc);
+                            setDireccion(cliente.direccion);
+                            setTelefono(cliente.telefono);
+                            setCondIvaCli(parseInt(cliente.cond_iva));
                             if (cliente.email.length > 0) {
-                                setEmailCliente(cliente.email)
-                                setEnvioEmailBool(1)
+                                setEmailCliente(cliente.email);
+                                setEnvioEmailBool(1);
                             }
                         } else {
-                            setEmailCliente("")
-                            setEnvioEmailBool(0)
+                            setEmailCliente('');
+                            setEnvioEmailBool(0);
                         }
                     } else {
-                        setEmailCliente("")
-                        setEnvioEmailBool(0)
+                        setEmailCliente('');
+                        setEnvioEmailBool(0);
                     }
                 })
                 .catch(() => {
-                    setEmailCliente("")
-                    setEnvioEmailBool(0)
-                })
+                    setEmailCliente('');
+                    setEnvioEmailBool(0);
+                });
         }
-    }
-    const getDataFiscalClient = async () => {      
-        
+    };
+    const getDataFiscalClient = async () => {
         if (ptoVta.cert_file && ptoVta.key_file) {
-            const query = `?cuit=${ndoc}&cert=${ptoVta.cert_file}&key=${ptoVta.key_file}&cuitPv=${ptoVta.cuit}`
-            await axios.get(UrlNodeServer.clientesDir.sub.dataFiscal + query, {
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-                }
-            })
-                .then(res => {
-                    const respuesta = res.data
-                    const status = respuesta.status
+            const query = `?cuit=${ndoc}&cert=${ptoVta.cert_file}&key=${ptoVta.key_file}&cuitPv=${ptoVta.cuit}`;
+            await axios
+                .get(UrlNodeServer.clientesDir.sub.dataFiscal + query, {
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('user-token'),
+                    },
+                })
+                .then((res) => {
+                    const respuesta = res.data;
+                    const status = respuesta.status;
                     if (status === 200) {
                         if (respuesta.body.status === 200) {
                             if (respuesta.body.data.datosMonotributo) {
-                                setRazSoc(respuesta.body.data.datosGenerales.nombre + " " + respuesta.body.data.datosGenerales.apellido)
-                                setTfact(6)
-                                setCondIvaCli(6)
+                                setRazSoc(
+                                    respuesta.body.data.datosGenerales.nombre +
+                                        ' ' +
+                                        respuesta.body.data.datosGenerales.apellido,
+                                );
+                                setTfact(6);
+                                setCondIvaCli(6);
                             } else {
                                 if (respuesta.body.data.datosGenerales.nombre) {
-                                    setRazSoc(respuesta.body.data.datosGenerales.nombre + " " + respuesta.body.data.datosGenerales.apellido)
+                                    setRazSoc(
+                                        respuesta.body.data.datosGenerales.nombre +
+                                            ' ' +
+                                            respuesta.body.data.datosGenerales.apellido,
+                                    );
                                 } else {
-                                    setRazSoc(respuesta.body.data.datosGenerales.razonSocial)
+                                    setRazSoc(respuesta.body.data.datosGenerales.razonSocial);
                                 }
-                                const impuesto = respuesta.body.data.datosRegimenGeneral.impuesto
-                                const iva = impuesto.find(imp => imp.idImpuesto === 30);
+                                const impuesto = respuesta.body.data.datosRegimenGeneral.impuesto;
+                                const iva = impuesto.find((imp) => imp.idImpuesto === 30);
                                 if (iva !== undefined) {
-                                    setTfact(1)
-                                    setCondIvaCli(1)
+                                    // setTfact(1)
+                                    setCondIvaCli(1);
                                 } else {
-                                    setTfact(6)
-                                    setCondIvaCli(4)
+                                    // setTfact(6)
+                                    setCondIvaCli(4);
                                 }
                             }
                         }
@@ -169,37 +179,38 @@ const NdocInput = ({
                 })
                 .catch(() => {
                     if (ptoVta.cond_iva === 6) {
-                        setTfact(11)
+                        setTfact(11);
                     } else {
-                        setTfact(6)
+                        setTfact(6);
                     }
-                })
-
+                });
         } else {
             if (ptoVta.cond_iva === 6) {
-                setTfact(11)
+                setTfact(11);
             } else {
-                setTfact(6)
+                setTfact(6);
             }
         }
-    }
+    };
 
     return (
         <Col md={colSize}>
-            <Label for="ndocTxt">{parseInt(tipoDoc) === 80 ? "Nº CUIT" : "Nº Doc."}</Label>
+            <Label for="ndocTxt">{parseInt(tipoDoc) === 80 ? 'Nº CUIT' : 'Nº Doc.'}</Label>
             <FormGroup>
                 <Input
                     invalid={invalidNdoc}
                     type="number"
                     id="ndocTxt"
                     value={ndoc}
-                    onChange={e => setNdoc(e.target.value)}
+                    onChange={(e) => setNdoc(e.target.value)}
                     onBlur={() => Find()}
                 />
-                <FormFeedback>{tipoDoc === 80 ? "El CUIT no es válido. Reviselo!" : "El DNI no es válido. Reviselo!"}</FormFeedback>
+                <FormFeedback>
+                    {tipoDoc === 80 ? 'El CUIT no es válido. Reviselo!' : 'El DNI no es válido. Reviselo!'}
+                </FormFeedback>
             </FormGroup>
         </Col>
-    )
-}
+    );
+};
 
-export default NdocInput
+export default NdocInput;

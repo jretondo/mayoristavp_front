@@ -36,7 +36,7 @@ const InvoiceHeader = ({
     const [users, setUsers] = useState([]);
 
     const isAdmin = localStorage.getItem('isAdmin');
-
+    console.log('tfact', tfact);
     const FormatearNroCte = useCallback(async () => {
         const cbte = await CompleteCerosLeft(nroCbte, 8);
         const pv = await CompleteCerosLeft(ptoVta.pv, 5);
@@ -157,19 +157,15 @@ const InvoiceHeader = ({
                                                     ptoVta.cond_iva === 0 ? (
                                                         <option value={0}>X</option>
                                                     ) : ptoVta.cond_iva === 1 ? (
-                                                        parseInt(clienteBool) === 1 ? (
-                                                            <>
-                                                                {parseInt(ptoVta.fact_m) === 0 && (
-                                                                    <option value={1}>A</option>
-                                                                )}
-                                                                {parseInt(ptoVta.fact_m) === 1 && (
-                                                                    <option value={51}>M</option>
-                                                                )}
-                                                                <option value={6}>B</option>
-                                                            </>
-                                                        ) : (
+                                                        <>
+                                                            {parseInt(ptoVta.fact_m) === 0 && (
+                                                                <option value={1}>A</option>
+                                                            )}
+                                                            {parseInt(ptoVta.fact_m) === 1 && (
+                                                                <option value={51}>M</option>
+                                                            )}
                                                             <option value={6}>B</option>
-                                                        )
+                                                        </>
                                                     ) : (
                                                         <option value={11}>C</option>
                                                     )

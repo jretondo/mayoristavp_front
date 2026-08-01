@@ -14,6 +14,47 @@ import FileSaver from 'file-saver';
 import ModalChange from './modalChange';
 import FormasPagoMod from './formasPago';
 
+const parseErrorResponse = (err) => {
+    const defaultMessage =
+        'La factura no se pudo generar por un error en los datos! Controle que no falten datos importantes en la cabecera';
+    const responseData = err && err.response && err.response.data;
+
+    if (!responseData) {
+        return defaultMessage;
+    }
+
+    try {
+        let data = responseData;
+        if (responseData instanceof ArrayBuffer) {
+            data = new TextDecoder('utf-8').decode(responseData);
+        }
+
+        if (typeof data === 'string') {
+            const text = data.trim();
+            if (!text) {
+                return defaultMessage;
+            }
+            data = JSON.parse(text);
+        }
+
+        if (data && typeof data === 'object') {
+            if (typeof data.body === 'string') {
+                return data.body;
+            }
+            if (typeof data.message === 'string') {
+                return data.message;
+            }
+            if (typeof data.error === 'string') {
+                return data.error;
+            }
+        }
+    } catch (error) {
+        return defaultMessage;
+    }
+
+    return defaultMessage;
+};
+
 const Ventas = ({ setValidPV }) => {
     const [clienteBool, setClienteBool] = useState(0);
     const [factFiscBool, setFactFiscBool] = useState(0);
@@ -93,10 +134,7 @@ const Ventas = ({ setValidPV }) => {
                     user_id: userId,
                 };
             }
-            if (
-                totalPrecio === 0 ||
-                Math.round(total * 100) / 100 !== totalFacturaRedondeado
-            ) {
+            if (totalPrecio === 0 || Math.round(total * 100) / 100 !== totalFacturaRedondeado) {
                 swal(
                     'Error: Total del pago!',
                     'Revise que el total del pago debe ser igual al total de la factura.',
@@ -148,7 +186,6 @@ const Ventas = ({ setValidPV }) => {
                 }
             })
             .catch(async (err) => {
-                console.log('object :>> ', err);
                 if (err.code === 'ECONNABORTED') {
                     await swal(
                         'Tiempo de espera superado!',
@@ -157,9 +194,10 @@ const Ventas = ({ setValidPV }) => {
                     );
                     await swal('Le mandaremos un email en cuanto se genere la factura.', '', 'info');
                 } else {
+                    const errorMessage = parseErrorResponse(err);
                     swal(
                         'Error inesperado!',
-                        'La factura no se pudo generar por un error en los datos! Controle que no falten datos importantes en la cabecera',
+                        errorMessage,
                         'error',
                     );
                 }
@@ -286,7 +324,7 @@ const Ventas = ({ setValidPV }) => {
                 setTfact(0);
             } else if (ptoVta.cond_iva === 1) {
                 if (parseInt(clienteBool) === 1) {
-                    setTfact(1);
+                    // setTfact(1);
                 } else {
                     setTfact(6);
                 }
@@ -309,23 +347,18 @@ const Ventas = ({ setValidPV }) => {
     }, [clienteBool]);
 
     const aplicaIva =
-        parseInt(factFiscBool) === 1 &&
-        Number(ptoVta.cond_iva) === 1 &&
-        [1, 6, 51].includes(parseInt(tfact));
+        parseInt(factFiscBool) === 1 && Number(ptoVta.cond_iva) === 1 && [1, 6, 51].includes(parseInt(tfact));
     const descuentoGeneralValido = parseFloat(descuentoPerc) > 0 && parseFloat(descuentoPerc) <= 100;
     const totalAntesDescuento = totalPrecio;
-    const totalConDescuento =
-        descuentoGeneralValido
-            ? totalAntesDescuento - totalAntesDescuento * (descuentoPerc / 100)
-            : totalAntesDescuento;
+    const totalConDescuento = descuentoGeneralValido
+        ? totalAntesDescuento - totalAntesDescuento * (descuentoPerc / 100)
+        : totalAntesDescuento;
     const totalesIva = productsSellList.reduce(
         (acc, item) => {
             const descuentoItem = Number(item.descuento_porcentaje) || 0;
             const ivaPorcentaje = Number(item.iva) || 0;
-            const totalItem =
-                Number(item.vta_price) * Number(item.cant_prod) * (1 - descuentoItem / 100);
-            const netoItem =
-                aplicaIva && ivaPorcentaje > 0 ? totalItem / (1 + ivaPorcentaje / 100) : totalItem;
+            const totalItem = Number(item.vta_price) * Number(item.cant_prod) * (1 - descuentoItem / 100);
+            const netoItem = aplicaIva && ivaPorcentaje > 0 ? totalItem / (1 + ivaPorcentaje / 100) : totalItem;
             const ivaItem = aplicaIva ? totalItem - netoItem : 0;
 
             return {
@@ -449,9 +482,7 @@ const Ventas = ({ setValidPV }) => {
 
                                         <Row style={{ marginTop: 0 }}>
                                             <Col md="4" style={{ marginLeft: 'auto', textAlign: 'right' }}>
-                                                <Label style={{ fontSize: '25px', fontWeight: 'bold' }}>
-                                                    IVA:
-                                                </Label>
+                                                <Label style={{ fontSize: '25px', fontWeight: 'bold' }}>IVA:</Label>
                                             </Col>
                                             <Col md="8">
                                                 <FormGroup>
@@ -544,8 +575,7 @@ const Ventas = ({ setValidPV }) => {
                             <Col>
                                 <button
                                     className={
-                                        totalPrecio === 0 ||
-                                        Math.round(total * 100) / 100 !== totalFacturaRedondeado
+                                        totalPrecio === 0 || Math.round(total * 100) / 100 !== totalFacturaRedondeado
                                             ? 'btn btn-gray'
                                             : 'btn btn-success'
                                     }

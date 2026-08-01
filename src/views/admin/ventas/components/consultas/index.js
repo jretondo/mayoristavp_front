@@ -7,7 +7,8 @@ const ConsultaVentasModule = () => {
     const [listaCaja, setListaCaja] = useState([])
     const [pagina, setPagina] = useState(1)
     const [loading, setLoading] = useState(false)
-        const [actualizar, setActualizar] = useState(false)
+    const [actualizar, setActualizar] = useState(false)
+
     return (
         <Card style={{ marginTop: "30px" }}>
             <CardBody>

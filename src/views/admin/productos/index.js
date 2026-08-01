@@ -33,7 +33,7 @@ const Productos = () => {
     const [unidad, setUnidad] = useState(0);
     const [venta, setVenta] = useState('');
     const [codBarra, setCodBarra] = useState('');
-    const [ivaCosto, setIvaCosto] = useState(0);
+    const [ivaCosto, setIvaCosto] = useState(21);
     const [round, setRound] = useState(0);
     const [idProv, setIdProv] = useState('');
     const [precioVta, setPrecioVta] = useState('');
@@ -326,8 +326,8 @@ const Productos = () => {
                                     detallesBool
                                         ? { display: 'block', marginTop: '25px' }
                                         : !nvaOffer
-                                        ? { display: 'none', marginTop: '25px' }
-                                        : { display: 'block', marginTop: '25px' }
+                                          ? { display: 'none', marginTop: '25px' }
+                                          : { display: 'block', marginTop: '25px' }
                                 }
                             >
                                 <Col className="order-xl-1" md="12">
