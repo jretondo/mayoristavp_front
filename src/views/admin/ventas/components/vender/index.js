@@ -102,77 +102,77 @@ const openInvoicePrintWindow = ({ html, fileName, pdfUrl }, invoiceWindow) => {
         return;
     }
 
-    const htmlBlob = new Blob([html], { type: 'text/html;charset=utf-8' });
-    const htmlUrl = URL.createObjectURL(htmlBlob);
     const pdfLink = getInvoicePublicUrl(pdfUrl);
+    const toolbarStyles = `
+        <style id="invoice-print-toolbar-style">
+            body {
+                padding-top: 52px;
+            }
+            .invoice-print-toolbar {
+                position: fixed;
+                z-index: 99999;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 52px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 0 12px;
+                background: #172b4d;
+                color: #fff;
+                box-sizing: border-box;
+                font-family: Arial, sans-serif;
+            }
+            .invoice-print-toolbar strong {
+                flex: 1;
+                font-size: 14px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .invoice-print-toolbar button,
+            .invoice-print-toolbar a {
+                border: 0;
+                border-radius: 4px;
+                padding: 8px 12px;
+                background: #fff;
+                color: #172b4d;
+                font-size: 13px;
+                cursor: pointer;
+                text-decoration: none;
+            }
+            @media print {
+                body {
+                    padding-top: 0 !important;
+                }
+                .invoice-print-toolbar {
+                    display: none !important;
+                }
+            }
+        </style>
+    `;
+    const toolbarHtml = `
+        <div class="invoice-print-toolbar">
+            <strong>${fileName || 'Comprobante generado'}</strong>
+            <button id="printButton" type="button">Imprimir</button>
+            ${pdfLink ? `<a href="${pdfLink}" target="_blank" rel="noreferrer">PDF</a>` : ''}
+        </div>
+    `;
+    const printableHtml = html
+        .replace('</head>', `${toolbarStyles}</head>`)
+        .replace('<body>', `<body>${toolbarHtml}`);
 
-    invoiceWindow.document.write(`
-        <!doctype html>
-        <html>
-            <head>
-                <title>${fileName || 'Comprobante'}</title>
-                <style>
-                    html, body {
-                        margin: 0;
-                        height: 100%;
-                        font-family: Arial, sans-serif;
-                        background: #f2f4f8;
-                    }
-                    .toolbar {
-                        height: 52px;
-                        display: flex;
-                        align-items: center;
-                        gap: 10px;
-                        padding: 0 12px;
-                        background: #172b4d;
-                        color: #fff;
-                        box-sizing: border-box;
-                    }
-                    .toolbar strong {
-                        flex: 1;
-                        font-size: 14px;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        white-space: nowrap;
-                    }
-                    .toolbar button,
-                    .toolbar a {
-                        border: 0;
-                        border-radius: 4px;
-                        padding: 8px 12px;
-                        background: #fff;
-                        color: #172b4d;
-                        font-size: 13px;
-                        cursor: pointer;
-                        text-decoration: none;
-                    }
-                    iframe {
-                        width: 100%;
-                        height: calc(100% - 52px);
-                        border: 0;
-                        background: #fff;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="toolbar">
-                    <strong>${fileName || 'Comprobante generado'}</strong>
-                    <button id="printButton">Imprimir</button>
-                    ${pdfLink ? `<a href="${pdfLink}" target="_blank" rel="noreferrer">PDF</a>` : ''}
-                </div>
-                <iframe id="invoiceFrame" src="${htmlUrl}"></iframe>
-                <script>
-                    document.getElementById('printButton').addEventListener('click', function () {
-                        document.getElementById('invoiceFrame').contentWindow.print();
-                    });
-                    window.addEventListener('beforeunload', function () {
-                        URL.revokeObjectURL('${htmlUrl}');
-                    });
-                </script>
-            </body>
-        </html>
-    `);
+    invoiceWindow.document.open();
+    invoiceWindow.document.write(printableHtml);
     invoiceWindow.document.close();
+
+    const printButton = invoiceWindow.document.getElementById('printButton');
+    if (printButton) {
+        printButton.addEventListener('click', () => {
+            invoiceWindow.print();
+        });
+    }
 };
 
 const Ventas = ({ setValidPV }) => {
@@ -446,8 +446,8 @@ const Ventas = ({ setValidPV }) => {
             if (ptoVta.cond_iva === 0) {
                 setTfact(0);
             } else if (ptoVta.cond_iva === 1) {
-                if (parseInt(clienteBool) === 1) {
-                    // setTfact(1);
+                if (parseInt(clienteBool) === 1 && cliente && [1, 6, 13].includes(parseInt(cliente.cond_iva))) {
+                    setTfact(parseInt(ptoVta.fact_m) === 1 ? 51 : 1);
                 } else {
                     setTfact(6);
                 }
@@ -457,7 +457,7 @@ const Ventas = ({ setValidPV }) => {
         } else {
             setTfact(0);
         }
-    }, [factFiscBool, clienteBool, ptoVta.cond_iva]);
+    }, [factFiscBool, clienteBool, cliente, ptoVta.cond_iva, ptoVta.fact_m]);
 
     useEffect(() => {
         cliente && setEmailCliente(cliente.email);

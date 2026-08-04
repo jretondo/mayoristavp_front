@@ -34,6 +34,9 @@ const InvoiceHeader = ({
     const [nroCbte, setNroCbte] = useState(0);
     const [clienteModalIsOpen, setClienteModalIsOpen] = useState(false);
     const [users, setUsers] = useState([]);
+    const clienteRequiereClaseA =
+        parseInt(clienteBool) === 1 && cliente && [1, 6, 13].includes(parseInt(cliente.cond_iva));
+    const comprobanteClaseA = parseInt(ptoVta.fact_m) === 1 ? 51 : 1;
 
     const isAdmin = localStorage.getItem('isAdmin');
     console.log('tfact', tfact);
@@ -157,15 +160,13 @@ const InvoiceHeader = ({
                                                     ptoVta.cond_iva === 0 ? (
                                                         <option value={0}>X</option>
                                                     ) : ptoVta.cond_iva === 1 ? (
-                                                        <>
-                                                            {parseInt(ptoVta.fact_m) === 0 && (
-                                                                <option value={1}>A</option>
-                                                            )}
-                                                            {parseInt(ptoVta.fact_m) === 1 && (
-                                                                <option value={51}>M</option>
-                                                            )}
+                                                        clienteRequiereClaseA ? (
+                                                            <option value={comprobanteClaseA}>
+                                                                {parseInt(ptoVta.fact_m) === 1 ? 'M' : 'A'}
+                                                            </option>
+                                                        ) : (
                                                             <option value={6}>B</option>
-                                                        </>
+                                                        )
                                                     ) : (
                                                         <option value={11}>C</option>
                                                     )
